@@ -49,3 +49,5 @@ GitBook version: 3.2.3
 
 执行 `make deploy` 即可。
 
+**注意：**需要确保当前分支（main）不能包含未提交内容。
+
