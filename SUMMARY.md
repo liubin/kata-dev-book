@@ -12,3 +12,8 @@
   * [agent 代码解析](src/day-6.md)
 * [参与 Kata Containers 项目](src/mission-3.md)
   * [第一个 Kata Containers 的 PR](src/day-7.md)
+* [Kata Containers Howto](src/mission-4.md)
+  * [开启 debug log](src/enable-debug-log.md)
+  * [使用 debug console](src/use-debug-console.md)
+  * [构建 guest image](src/build-guest-image.md)
+  * [构建 kernel](src/build-kernel.md)
