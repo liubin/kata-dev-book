@@ -7,3 +7,4 @@ deploy:
 	git add docs
 	git ci -m "update website"
 	git push
+	git checkout main

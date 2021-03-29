@@ -1,4 +1,4 @@
-# Day 2：下载并编译 Kata Containers 代码
+# 下载并编译 Kata Containers 代码
 
 上一篇文章中介绍了如何使用VirtualBox + Vagrant 构建一台基于 Ubuntu 的虚拟机，并在里面安装了 containerd + Kata Containers 2.0，同时安装好了开发环境，包括 Golang 和 Rust 。不过我们还没有进行过任何开发活动，这也是我们从这篇文章开始将要接触到的内容。
 
