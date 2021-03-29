@@ -22,6 +22,15 @@ $ vagrant  version
 ==> vagrant: To upgrade visit: https://www.vagrantup.com/downloads.html
 ```
 
+顺带安装下vagrant的vagrant-disksize插件，否则启动虚拟机会报错。
+
+```
+$vagrant plugin install vagrant-disksize
+Installing the 'vagrant-disksize' plugin. This can take a few minutes...
+Fetching vagrant-disksize-0.1.3.gem
+Installed the plugin 'vagrant-disksize (0.1.3)'!
+```
+
 ### 创建虚拟机
 
 首先创建一个工作目录：
@@ -372,4 +381,3 @@ Removed sandbox d3e1a1567602e12335dc0f772774f96f4ef66736c0a98d9dd0ab14164292c4e9
 ## 小结
 
 这一章，介绍了如何使用 Vagrant + VirtualBox 创建虚拟机，在虚拟机中安装 Kata Containers 2.0，并通过 crictl 工具来创建兼容 K8s 的 Pod。
-
