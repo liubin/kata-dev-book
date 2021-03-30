@@ -18,4 +18,4 @@ Kata Containers 架构可以概括地使用下图进行说明：
 
 - CRI： 容器运行时接口，这是 k8s（实际上是 kubelet）和 上层 runtime 之间的通信接口
 - shim v2：上层 runtime （如 containerd ）和 下层 runtime（如 Kata Containers ） 之间的通信接口
-- agent协议：这是 Kata Containers 内部的协议，用于 Kata Containers 的 shim 进程和 guest 内的 agent 之间的通信。
+- agent 协议：这是 Kata Containers 内部的协议，用于 Kata Containers 的 shim 进程和 guest 内的 agent 之间的通信。
