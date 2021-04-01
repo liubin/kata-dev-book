@@ -51,3 +51,23 @@ GitBook version: 3.2.3
 
 **注意：** 需要确保当前分支（main）不能包含未提交内容。
 
+## 生成 pdf 文件
+
+生成 pdf 文件需要 [calibre](https://calibre-ebook.com) 的支持。
+
+在 macOS 下，如果安装了 clibre ，可能还是会出错，类似这样。
+
+```
+InstallRequiredError: "ebook-convert" is not installed.
+Install it from Calibre: https://calibre-ebook.com
+```
+
+如果确认已经安装了 calibre ，那么很可能是因为 `ebook-convert` 命令没有在 `$PATH` 环境变量中，执行下面的命令即可：
+
+
+```
+$ sudo ln -s /Applications/calibre.app/Contents/MacOS/ebook-convert /usr/local/bin
+```
+
+成功的话，就会在当前文件夹下生成 `book.pdf`，这也就是电子书的 pdf 格式。
+
