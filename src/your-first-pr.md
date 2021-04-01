@@ -29,8 +29,8 @@
 如果你的开源项目和工作项目需要分开，或者有多个账号要分开使用，那么推荐为不同的项目仓库配置不同的 git 用户信息（即标志一个代码贡献者）。
 
 ```
-$ git config --local user.name liubin
-$ git config --local user.email liubin0329@gmail.com
+$ git config --local user.name zhangsan-lisi
+$ git config --local user.email zhangsan-lisi@gmail.com
 ```
 
 如果你已经设置了全集的用户信息（通过 `--global` 选项），并且不想单独设置不同的账号，则这一步可以省略。
