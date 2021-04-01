@@ -24,4 +24,4 @@
 * [附录](src/appendix.md)
   * [简易 Rust 入门](src/rust-hello-world.md)
   * [bats](src/bats.md)
-  * [tests 相关](src/tests-tips.md)
+  * [tests 仓库](src/tests-tips.md)
