@@ -240,7 +240,7 @@ EOF
 90,93d89
 <         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.kata]
 <           runtime_type = "io.containerd.kata.v2"
-<           pod_annotations = ["io.kata-containers.*"]
+<           pod_annotations = ["io.katacontainers.*"]
 <           privileged_without_host_devices = true
 ```
 
