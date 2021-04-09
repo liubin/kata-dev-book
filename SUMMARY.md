@@ -18,6 +18,7 @@
   * [使用 debug console](src/use-debug-console.md)
   * [构建 guest image](src/build-guest-image.md)
   * [构建 kernel](src/build-kernel.md)
+  * [更新 runtime/agent Protocol Buffers 文件](src/generate-proto.md)
   * [在 K8s 中使用 Kata Containers](src/with-k8s.md)
   * [使用 Prometheus + Grafana 监控 Kata Containers](src/kata-prom-grafana.md)
   * [使用 Jaeger 输出 Kata Containers 的 Trace](src/kata-trace.md)
