@@ -14,7 +14,7 @@ CRI API 定义了两类服务： ImageService 和 RuntimeService。
 
 从名字也可以看出，这两个服务分别负责镜像和容器。ImageService 用于拉取镜像，获取镜像信息，RuntimeService 负责管理 pod 和容器的生命周期，也包括容器的exec/attach和端口转发等。
 
-通常来说一个运行时可以同时提供这两种类型的接口，这样只需要设置一个运行时地址，如果两种接口分别由不同的服务实现，Kubelet 也提供了 `--container-runtime-endpoint` 和 `--image-service-endpoint` 两个参数类设置不同的运行时服务。
+通常来说一个运行时可以同时提供这两种类型的接口，这样只需要设置一个运行时地址，如果两种接口分别由不同的服务实现，Kubelet 也提供了 `--container-runtime-endpoint` 和 `--image-service-endpoint` 两个参数来设置不同的运行时服务。
 
 CRI 接口的完整定义在 [https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/kubelet/api/v1alpha1/runtime/api.proto](https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/kubelet/api/v1alpha1/runtime/api.proto) 。
 
