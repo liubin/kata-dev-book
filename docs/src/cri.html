@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>搭建环境 · GitBook</title>
+        <title>Container Runtime Interface (CRI) · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="vagrant-up.html" />
     
-    
-    <link rel="prev" href="../" />
+    <link rel="prev" href="tests-tips.html" />
     
 
     </head>
@@ -102,7 +100,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2" data-path="mission-1.html">
+        <li class="chapter " data-level="1.2" data-path="mission-1.html">
             
                 <a href="mission-1.html">
             
@@ -439,7 +437,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.4" data-path="cri.html">
+        <li class="chapter active" data-level="1.6.4" data-path="cri.html">
             
                 <a href="cri.html">
             
@@ -487,7 +485,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >搭建环境</a>
+        <a href=".." >Container Runtime Interface (CRI)</a>
     </h1>
 </div>
 
@@ -502,8 +500,101 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x642D;&#x5EFA;&#x73AF;&#x5883;">&#x642D;&#x5EFA;&#x73AF;&#x5883;</h1>
-<p>&#x8FD9;&#x4E24;&#x7AE0;&#x4E3B;&#x8981;&#x662F;&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x642D;&#x5EFA;&#x4E00;&#x4E2A; Kata Containers &#x7684;&#x5F00;&#x53D1;&#x73AF;&#x5883;&#x3002;</p>
+                                <h1 id="container-runtime-interface-cri">Container Runtime Interface (CRI)</h1>
+<p>CRI &#x662F;&#x76EE;&#x524D; K8s &#x548C;&#x5BB9;&#x5668;&#x8FD0;&#x884C;&#x65F6;&#x4E4B;&#x95F4;&#x7684;&#x901A;&#x4FE1;&#x63A5;&#x53E3;&#x3002;&#x8BE5;&#x63A5;&#x53E3;&#x4ECE; <a href="https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes/" target="_blank">K8s 1.5</a> &#x5F00;&#x59CB;&#x5F15;&#x5165;&#xFF0C;&#x76EE;&#x524D;&#x662F; K8s &#x552F;&#x4E00;&#x652F;&#x6301;&#x7684;&#x5BB9;&#x5668;&#x8FD0;&#x884C;&#x65F6;&#x76F8;&#x5173;&#x63A5;&#x53E3;&#xFF0C;&#x5F53;&#x524D;&#x7248;&#x672C;&#x4E3A; v1alpha1&#x3002;</p>
+<p>&#x5177;&#x4F53;&#x6765;&#x8BF4; containerd &#x3001; CRI-O &#x662F;&#x6700;&#x6D41;&#x884C;&#x7684;&#x4E24;&#x79CD;&#x5B9E;&#x73B0;&#x3002;&#x4E00;&#x822C;&#x6211;&#x4EEC;&#x5C06;&#x8FD0;&#x884C;&#x65F6;&#x5206;&#x4E3A;&#x9AD8;&#x7EA7;&#x8FD0;&#x884C;&#x65F6;&#x548C;&#x4F4E;&#x7EA7;&#x8FD0;&#x884C;&#x65F6;&#xFF0C;&#x524D;&#x8005;&#x76F4;&#x63A5;&#x548C; kubelet &#x4EA4;&#x4E92;&#xFF0C;containerd &#x5373;&#x5C5E;&#x4E8E;&#x6B64;&#x7C7B;&#xFF1B;&#x4F4E;&#x7EA7;&#x8FD0;&#x884C;&#x65F6;&#x624D;&#x771F;&#x6B63;&#x7684;&#x7BA1;&#x7406;&#x5BB9;&#x5668;&#xFF0C;&#x6BD4;&#x5982; runc &#x6216; Kata Containers &#x90FD;&#x5C5E;&#x4E8E;&#x8FD9;&#x4E00;&#x7C7B;&#x3002;</p>
+<h2 id="cri-&#x6982;&#x8FF0;">CRI &#x6982;&#x8FF0;</h2>
+<p>Kubelet &#x901A;&#x8FC7; Unix socket &#x548C; CRI &#x901A;&#x4FE1;&#xFF0C;&#x901A;&#x4FE1;&#x4F7F;&#x7528; gRPC &#x534F;&#x8BAE;&#x3002;</p>
+<p><img src="images/cri.png" alt=""></p>
+<p>CRI API &#x5B9A;&#x4E49;&#x4E86;&#x4E24;&#x7C7B;&#x670D;&#x52A1;&#xFF1A; ImageService &#x548C; RuntimeService&#x3002;</p>
+<p>&#x4ECE;&#x540D;&#x5B57;&#x4E5F;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x8FD9;&#x4E24;&#x4E2A;&#x670D;&#x52A1;&#x5206;&#x522B;&#x8D1F;&#x8D23;&#x955C;&#x50CF;&#x548C;&#x5BB9;&#x5668;&#x3002;ImageService &#x7528;&#x4E8E;&#x62C9;&#x53D6;&#x955C;&#x50CF;&#xFF0C;&#x83B7;&#x53D6;&#x955C;&#x50CF;&#x4FE1;&#x606F;&#xFF0C;RuntimeService &#x8D1F;&#x8D23;&#x7BA1;&#x7406; pod &#x548C;&#x5BB9;&#x5668;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x4E5F;&#x5305;&#x62EC;&#x5BB9;&#x5668;&#x7684;exec/attach&#x548C;&#x7AEF;&#x53E3;&#x8F6C;&#x53D1;&#x7B49;&#x3002;</p>
+<p>&#x901A;&#x5E38;&#x6765;&#x8BF4;&#x4E00;&#x4E2A;&#x8FD0;&#x884C;&#x65F6;&#x53EF;&#x4EE5;&#x540C;&#x65F6;&#x63D0;&#x4F9B;&#x8FD9;&#x4E24;&#x79CD;&#x7C7B;&#x578B;&#x7684;&#x63A5;&#x53E3;&#xFF0C;&#x8FD9;&#x6837;&#x53EA;&#x9700;&#x8981;&#x8BBE;&#x7F6E;&#x4E00;&#x4E2A;&#x8FD0;&#x884C;&#x65F6;&#x5730;&#x5740;&#xFF0C;&#x5982;&#x679C;&#x4E24;&#x79CD;&#x63A5;&#x53E3;&#x5206;&#x522B;&#x7531;&#x4E0D;&#x540C;&#x7684;&#x670D;&#x52A1;&#x5B9E;&#x73B0;&#xFF0C;Kubelet &#x4E5F;&#x63D0;&#x4F9B;&#x4E86; <code>--container-runtime-endpoint</code> &#x548C; <code>--image-service-endpoint</code> &#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x6765;&#x8BBE;&#x7F6E;&#x4E0D;&#x540C;&#x7684;&#x8FD0;&#x884C;&#x65F6;&#x670D;&#x52A1;&#x3002;</p>
+<p>CRI &#x63A5;&#x53E3;&#x7684;&#x5B8C;&#x6574;&#x5B9A;&#x4E49;&#x5728; <a href="https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/kubelet/api/v1alpha1/runtime/api.proto" target="_blank">https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/kubelet/api/v1alpha1/runtime/api.proto</a> &#x3002;</p>
+<h3 id="imageservice">ImageService</h3>
+<p>&#x955C;&#x50CF;&#x63A5;&#x53E3;&#x4E0D;&#x591A;&#xFF0C;&#x4E3B;&#x8981;&#x5305;&#x62EC;&#x955C;&#x50CF;&#x7684;&#x4E0B;&#x8F7D;&#x3001;&#x5220;&#x9664;&#x3001;&#x67E5;&#x770B;&#x3002;</p>
+<pre><code>// ImageService defines the public APIs for managing images.
+service ImageService {
+    // ListImages lists existing images.
+    rpc ListImages(ListImagesRequest) returns (ListImagesResponse) {}
+    // ImageStatus returns the status of the image. If the image is not
+    // present, returns nil.
+    rpc ImageStatus(ImageStatusRequest) returns (ImageStatusResponse) {}
+    // PullImage pulls an image with authentication config.
+    rpc PullImage(PullImageRequest) returns (PullImageResponse) {}
+    // RemoveImage removes the image.
+    // This call is idempotent, and must not return an error if the image has
+    // already been removed.
+    rpc RemoveImage(RemoveImageRequest) returns (RemoveImageResponse) {}
+}
+</code></pre><h3 id="runtimeservice">RuntimeService</h3>
+<p>&#x5728; CRI/K8s &#x4E2D;&#xFF0C; PodSandbox &#x662F;&#x4E00;&#x4E2A;&#x4E0D;&#x540C;&#x4E8E;&#x5BB9;&#x5668;&#x7684;&#x6982;&#x5FF5;&#xFF0C;&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x8868;&#x793A;&#x4E00;&#x4E2A;&#x9694;&#x79BB;&#x7684;&#x3001;&#x5E26;&#x6709;&#x8D44;&#x6E90;&#x9650;&#x5236;&#x7684;&#x8FD0;&#x884C;&#x73AF;&#x5883;&#xFF0C;&#x6240;&#x6709;&#x7684;&#x5BB9;&#x5668;&#x90FD;&#x4F1A;&#x5728; Pod &#x7684; cgroup &#x4E2D;&#x521B;&#x5EFA;&#x3002;</p>
+<p>&#x5728;&#x521B;&#x5EFA;&#x5BB9;&#x5668;&#x4E4B;&#x524D;&#xFF0C;&#x5FC5;&#x987B;&#x5148;&#x901A;&#x8FC7; <code>RunPodSandbox</code> API &#x521B;&#x5EFA;&#x8FD0;&#x884C;&#x73AF;&#x5883;&#xFF08;&#x5BF9; Kata Containers &#x6765;&#x8BF4;&#x662F;&#x4E00;&#x4E2A;&#x865A;&#x62DF;&#x673A;&#xFF0C;&#x5BF9; runc &#x6765;&#x8BF4;&#x662F;&#x4E00;&#x7CFB;&#x5217;namespace&#xFF09;&#x3002;</p>
+<p>PodSandbox &#x521B;&#x5EFA;&#x597D;&#x4E4B;&#x540E;&#xFF0C;&#x624D;&#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#x5BB9;&#x5668;&#x76F8;&#x5173;&#x7684;&#x64CD;&#x4F5C;&#xFF08;&#x521B;&#x5EFA;&#x3001;&#x542F;&#x52A8;&#x3001;&#x505C;&#x6B62;&#x548C;&#x5220;&#x9664;&#x7B49;&#xFF09;&#x3002;</p>
+<p>&#x8FD0;&#x884C;&#x65F6;&#x76F8;&#x5173;&#x63A5;&#x53E3;&#x5F88;&#x591A;&#xFF0C;&#x4E3B;&#x8981;&#x662F;&#x56F4;&#x7ED5;&#x5BB9;&#x5668;&#x7684;&#x64CD;&#x4F5C;&#x3002;</p>
+<pre><code>// Runtime service defines the public APIs for remote container runtimes
+service RuntimeService {
+    // Version returns the runtime name, runtime version, and runtime API version.
+    rpc Version(VersionRequest) returns (VersionResponse) {}
+
+    // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure
+    // the sandbox is in the ready state on success.
+    rpc RunPodSandbox(RunPodSandboxRequest) returns (RunPodSandboxResponse) {}
+    // StopPodSandbox stops any running process that is part of the sandbox and
+    // reclaims network resources (e.g., IP addresses) allocated to the sandbox.
+    // If there are any running containers in the sandbox, they must be forcibly
+    // terminated.
+    // This call is idempotent, and must not return an error if all relevant
+    // resources have already been reclaimed. kubelet will call StopPodSandbox
+    // at least once before calling RemovePodSandbox. It will also attempt to
+    // reclaim resources eagerly, as soon as a sandbox is not needed. Hence,
+    // multiple StopPodSandbox calls are expected.
+    rpc StopPodSandbox(StopPodSandboxRequest) returns (StopPodSandboxResponse) {}
+    // RemovePodSandbox removes the sandbox. If there are any running containers
+    // in the sandbox, they must be forcibly terminated and removed.
+    // This call is idempotent, and must not return an error if the sandbox has
+    // already been removed.
+    rpc RemovePodSandbox(RemovePodSandboxRequest) returns (RemovePodSandboxResponse) {}
+    // PodSandboxStatus returns the status of the PodSandbox.
+    rpc PodSandboxStatus(PodSandboxStatusRequest) returns (PodSandboxStatusResponse) {}
+    // ListPodSandbox returns a list of PodSandboxes.
+    rpc ListPodSandbox(ListPodSandboxRequest) returns (ListPodSandboxResponse) {}
+
+    // CreateContainer creates a new container in specified PodSandbox
+    rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse) {}
+    // StartContainer starts the container.
+    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse) {}
+    // StopContainer stops a running container with a grace period (i.e., timeout).
+    // This call is idempotent, and must not return an error if the container has
+    // already been stopped.
+    // TODO: what must the runtime do after the grace period is reached?
+    rpc StopContainer(StopContainerRequest) returns (StopContainerResponse) {}
+    // RemoveContainer removes the container. If the container is running, the
+    // container must be forcibly removed.
+    // This call is idempotent, and must not return an error if the container has
+    // already been removed.
+    rpc RemoveContainer(RemoveContainerRequest) returns (RemoveContainerResponse) {}
+    // ListContainers lists all containers by filters.
+    rpc ListContainers(ListContainersRequest) returns (ListContainersResponse) {}
+    // ContainerStatus returns status of the container.
+    rpc ContainerStatus(ContainerStatusRequest) returns (ContainerStatusResponse) {}
+
+    // ExecSync runs a command in a container synchronously.
+    rpc ExecSync(ExecSyncRequest) returns (ExecSyncResponse) {}
+    // Exec prepares a streaming endpoint to execute a command in the container.
+    rpc Exec(ExecRequest) returns (ExecResponse) {}
+    // Attach prepares a streaming endpoint to attach to a running container.
+    rpc Attach(AttachRequest) returns (AttachResponse) {}
+    // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
+    rpc PortForward(PortForwardRequest) returns (PortForwardResponse) {}
+
+    // UpdateRuntimeConfig updates the runtime configuration based on the given request.
+    rpc UpdateRuntimeConfig(UpdateRuntimeConfigRequest) returns (UpdateRuntimeConfigResponse) {}
+
+    // Status returns the status of the runtime.
+    rpc Status(StatusRequest) returns (StatusResponse) {}
+}
+</code></pre><h2 id="cri-api">cri-api</h2>
+<p><a href="https://github.com/kubernetes/cri-api" target="_blank">cri-api</a> &#x662F;&#x4E00;&#x5957; golang &#x7684;&#x5E93;&#xFF0C;&#x5305;&#x62EC; CRI API &#x5B9A;&#x4E49;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x8FD9;&#x4E2A;&#x5E93;&#x624B;&#x52A8;&#x7F16;&#x7801;&#x4F7F;&#x7528; CRI &#x63A5;&#x53E3;&#x3002;</p>
 
                                 
                                 </section>
@@ -531,14 +622,10 @@
 
             
                 
-                <a href="../" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                <a href="tests-tips.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: tests 仓库">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
-                
-                <a href="vagrant-up.html" class="navigation navigation-next " aria-label="Next page: 使用 VirtualBox 安装虚拟机开发环境">
-                    <i class="fa fa-angle-right"></i>
-                </a>
                 
             
         
@@ -547,7 +634,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"搭建环境","level":"1.2","depth":1,"next":{"title":"使用 VirtualBox 安装虚拟机开发环境","level":"1.2.1","depth":2,"path":"src/vagrant-up.md","ref":"src/vagrant-up.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/mission-1.md","mtime":"2021-04-09T07:37:11.345Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-13T09:57:26.905Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Container Runtime Interface (CRI)","level":"1.6.4","depth":2,"previous":{"title":"tests 仓库","level":"1.6.3","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/cri.md","mtime":"2021-04-13T09:56:41.988Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-13T09:57:26.905Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
