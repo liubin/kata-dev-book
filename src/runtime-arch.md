@@ -27,6 +27,161 @@ Runtime 代码在 src/runtime 下，主要由如下几个 package
 
 这个包是实现了 shim v2 协议的 ttrpc server 的入口，具体容器、sandbox 的操作，则使用了 pkg 和 virtcontainers 两个包下的实现。
 
+Shim v2 实现文件入口在 `src/runtime/containerd-shim-v2/service.go` 中。这个文件定义了 service struct ，该结构实现了 shim v2 协议要求的接口（为方便阅读删除了部分属性）：
+
+```golang
+type service struct {
+	// hypervisor pid, Since this shimv2 cannot get the container processes pid from VM,
+	// thus for the returned values needed pid, just return the hypervisor's
+	// pid directly.
+	hpid uint32
+
+	// shim's pid
+	pid uint32
+
+	sandbox    vc.VCSandbox
+	containers map[string]*container
+	config     *oci.RuntimeConfig
+	events     chan interface{}
+	monitor    chan error
+
+	id string
+}
+```
+
+在这个结构中，主要的是 `sandbox` 和 `containeres` 属性。 `sandbox` 指向一个 `vc.VCSandbox` 接口实例， `containers` 是一个容器列表，很多 shimv2 接口都是对容器的操作，都会使用到这个结构。`monitor` 用于监控 sandbox 是否在运行中。
+
+Shimv2 要求的接口如下：
+
+```golang
+type Shim interface {
+	shimapi.TaskService
+	Cleanup(ctx context.Context) (*shimapi.DeleteResponse, error)
+	StartShim(ctx context.Context, id, containerdBinary, containerdAddress string) (string, error)
+}
+
+type TaskService interface {
+	State(ctx context.Context, req *StateRequest) (*StateResponse, error)
+	Create(ctx context.Context, req *CreateTaskRequest) (*CreateTaskResponse, error)
+	Start(ctx context.Context, req *StartRequest) (*StartResponse, error)
+	Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error)
+	Pids(ctx context.Context, req *PidsRequest) (*PidsResponse, error)
+	Pause(ctx context.Context, req *PauseRequest) (*google_protobuf1.Empty, error)
+	Resume(ctx context.Context, req *ResumeRequest) (*google_protobuf1.Empty, error)
+	Checkpoint(ctx context.Context, req *CheckpointTaskRequest) (*google_protobuf1.Empty, error)
+	Kill(ctx context.Context, req *KillRequest) (*google_protobuf1.Empty, error)
+	Exec(ctx context.Context, req *ExecProcessRequest) (*google_protobuf1.Empty, error)
+	ResizePty(ctx context.Context, req *ResizePtyRequest) (*google_protobuf1.Empty, error)
+	CloseIO(ctx context.Context, req *CloseIORequest) (*google_protobuf1.Empty, error)
+	Update(ctx context.Context, req *UpdateTaskRequest) (*google_protobuf1.Empty, error)
+	Wait(ctx context.Context, req *WaitRequest) (*WaitResponse, error)
+	Stats(ctx context.Context, req *StatsRequest) (*StatsResponse, error)
+	Connect(ctx context.Context, req *ConnectRequest) (*ConnectResponse, error)
+	Shutdown(ctx context.Context, req *ShutdownRequest) (*google_protobuf1.Empty, error)
+}
+```
+
+可以看到 shimv2 接口实际上是没有“容器”类型资源的接口的，只是“Task”类型的资源，所以 ctr 命令也是使用了 `ctr container` 好 `ctr task` 两个子命令来分别处理容器和 task：容器是一组静态资源，只有真正启动（运行）后，才能成为 Task ，也就是进程。
+
+`Cleanup` 会有清理 task（这时候 shimv2 进程可能因为意外退出了，所以不能通过 shimv2 的 ttrpc 链接来执行操作）
+
+`StartShim` 用于启动一个 shimv2 进程。
+
+#### shim v2 启动过程
+
+shimv2 启动的时候，实际上是启动了两次 shim v2 进程。
+
+containerd 会调用 [StartShim](https://github.com/kata-containers/kata-containers/blob/2.0.3/src/runtime/containerd-shim-v2/service.go#L173-L233) 函数启动 shimv2 进程。实际启动 shimv2 进程的方法 containerd 已经[封装好了](https://github.com/kata-containers/kata-containers/blob/2.0.3/src/runtime/vendor/github.com/containerd/containerd/runtime/v2/shim/shim.go#L132)，Kata Containers 只需要按照 containerd 包的规则实现指定的 New 方法以及 shimv2 要求的接口即可。
+
+这个启动方法[大致如下](https://github.com/kata-containers/kata-containers/blob/2.0.3/src/runtime/vendor/github.com/containerd/containerd/runtime/v2/shim/shim.go#L143-L207)：
+
+```golang
+// src/runtime/vendor/github.com/containerd/containerd/runtime/v2/shim/shim.go
+service, err := initFunc(ctx, idFlag, publisher)
+
+switch action {
+case "delete":
+	response, err := service.Cleanup(ctx)
+	// ...
+case "start":
+	address, err := service.StartShim(ctx, idFlag, containerdBinaryFlag, addressFlag)
+	if err != nil {
+		return err
+	}
+	if _, err := os.Stdout.WriteString(address); err != nil {
+		return err
+	}
+	return nil
+default:
+	// ...
+	client := NewShimClient(ctx, service, signals)
+	return client.Serve()
+}
+```
+
+我们可以看到， shimv2 进程可以接收 “3” 个参数：
+- "start"：启动 shimv2 进程
+- "delete"：删除容器
+- "": 启动 shimv2 ttrpc service
+
+启动一个 shimv2 进程，实际上 `containerd-shim-kata-v2` 是运行了两次，如下图所示：
+
+![kata-shim-startup](images/kata-shimv2-startup.png)
+
+第一次启动是由 containerd 发起，第一个参数是 start ，这时候启动参数包括：
+
+- `-namespace`：容器的 namespace
+- `-address`： containerd 服务的监听地址
+- `-publish-binary`： containerd 发布事件的二进制程序路径。
+- `-id`：容器ID
+
+在 start 中，shimv2 会创建一个监听 ttrpc 的 socket 地址，然后在该进程中再启动一个 shimv2 进程。第二个 shimv2 进程启动时使用 golang 的 `exec.Start()` 系统函数，启动进程但是不等待进程结束。
+第二个启动的shimv2进程也不带参数（但是带 commandline options，即 -- 开头的命令行选项），这对应上面代码中 `switch` 的 `default` 的处理分支，即：
+
+```golang
+client := NewShimClient(ctx, service, signals)
+return client.Serve()
+```
+
+也就是说，第二个启动 shim v2 会长时间运行下去，作为 ttrpc server，提供 shimv2 的 API 。
+
+ttrpc 监听地址是一个特殊类型的 unix socket，名为 abstract unix socket，用 `netstat --protocol unix` 查看的话，这类 socket 地址前面会有一个 `@` 符号。这个 socket 是在第一个 shimv2 打开的，文件描述符会传递给子进程，即第二个 shimv2 进程，在第二个 shimv2 进程中，会使用下面的方法来获取这个 socket 地址作为 ttrpc 的服务监听地址：
+
+```golang
+// src/runtime/vendor/github.com/containerd/containerd/runtime/v2/shim/shim_unix.go
+func serveListener(path string) (net.Listener, error) {
+	if path == "" {
+		l, err = net.FileListener(os.NewFile(3, "socket"))
+		path = "[inherited from parent]"
+	} else {
+		if len(path) > 106 {
+			return nil, errors.Errorf("%q: unix socket path too long (> 106)", path)
+		}
+		l, err = net.Listen("unix", "\x00"+path)
+	}
+	return l, nil
+}
+```
+
+在 containerd 的当前实现中，并没有通过命令行参数传递这个 socket 地址，所以 使用了 `os.NewFile(3, "socket")` 这种方式获取从父进程传递过来的文件描述符：
+
+父进程（第一个 shimv2 进程）：
+```golang
+cmd, err := newCommand(ctx, containerdBinary, id, containerdAddress)
+socket, err := cdshim.NewSocket(address)
+f, err := socket.File()
+cmd.ExtraFiles = append(cmd.ExtraFiles, f)
+```
+
+子进程（第二个 shimv2 进程）：
+```golang
+l, err = net.FileListener(os.NewFile(3, "socket"))
+```
+
+第一个 shimv2 进程，会将 ttrpc 监听地址写入到标准输出，返回给 containerd 使用。
+
+**Not:** containerd 有一些 task 事件是通过 shimv2 进程调用 containerd 程序来发送给 containerd 的，而不是通过网络连接或者 API ，所以 shimv2 启动选项中有 `publish-binary` 。
+
 ### virtcontainers
 
 这里是 Kata Containers 中的核心实现代码，主要是通过对 hypervisor 和 guest 的管理，实现标准的容器操作接口。
