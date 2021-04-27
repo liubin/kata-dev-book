@@ -182,6 +182,56 @@ l, err = net.FileListener(os.NewFile(3, "socket"))
 
 **Not:** containerd 有一些 task 事件是通过 shimv2 进程调用 containerd 程序来发送给 containerd 的，而不是通过网络连接或者 API ，所以 shimv2 启动选项中有 `publish-binary` 。
 
+#### CreateContainer
+
+- containerd 通过 shimv2 的 Create() 接口创建 task（containerd-shim-v2/service.go）
+- Create() 调用 create() 方法（containerd-shim-v2/create.go）
+- 根据 containerType：
+  - PodSandbox：创建 sandbox 容器，如果是 cri 的话，即 pause 容器。
+    - katautils.CreateSandbox()（pkg/katautils/create.go）
+      - VCImpl.CreateSandbox()（virtcontainers/implementation.go）
+      	- CreateSandbox()（virtcontainers/api.go）
+      		- createSandboxFromConfig()（virtcontainers/api.go）
+      			- s := createSandbox()（virtcontainers/sandbox.go）
+      			- s.createNetwork()（virtcontainers/sandbox.go）
+      			- s.startVM()（virtcontainers/sandbox.go）
+      			- s.createContainers()（virtcontainers/sandbox.go）
+  - PodContainer：创建普通业务容器，即用户真正的用于工作的容器。
+    - katautils.CreateContainer()（pkg/katautils/create.go）
+      - sandbox.CreateContainer()（virtcontainers/sandbox.go）
+
+更复杂的可以参考下面这个图，这个图显示的是创建 PodSandbox 时候的流程。由于是 sandbox 容器，因此虚拟机是在这个步骤中创建的。
+
+![create kata task](images/shim-create-task.png)
+
+其中下面这 `Sandbox` 结构体的这两个属性需要注意一下，即：
+
+```golang
+// virtcontainers/sandbox.go
+type Sandbox struct {
+	config *SandboxConfig
+	containers map[string]*v
+}
+
+type SandboxConfig struct {
+	// Containers describe the list of containers within a Sandbox.
+	// This list can be empty and populated by adding containers
+	// to the Sandbox a posteriori.
+	//TODO: this should be a map to avoid duplicated containers
+	Containers []ContainerConfig
+}
+
+// virtcontainers/container.go
+type Container struct {
+	config *ContainerConfig
+}
+
+type ContainerConfig struct {
+}
+```
+
+`Sandbox` 结构体保存了两个关于容器的结构： `SandboxConfig` 和 `Container`（定义在 `container.go` 里）。这两个既要区分清楚，也不能忘记数据的同步，因为 SandboxConfig 里保存的 `ContainerConfig` 并非指针，而是一个复制对象，而  `Container` 保存的则是一个指针。
+
 ### virtcontainers
 
 这里是 Kata Containers 中的核心实现代码，主要是通过对 hypervisor 和 guest 的管理，实现标准的容器操作接口。
