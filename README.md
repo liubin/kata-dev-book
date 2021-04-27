@@ -4,6 +4,10 @@
 
 本文档原文件代码地址：https://github.com/liubin/kata-dev-book
 
+**Version:** BUILD_VERSION
+
+**Build At:** BUILD_DATE
+
 ## 面向用户对象
 
 本书主要针对 Kata Containers 的初学者、容器技术相关的兴趣者。
