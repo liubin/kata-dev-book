@@ -83,7 +83,7 @@ func (k *kataAgent) internalConfigure(h hypervisor, id string, config interface{
 
 之后我们就可以准备提交代码了。只是按照现在的流程，在提交 PR 之前，需要先创建 issue。
 
-### 创建 PR
+### 创建 issue
 
 在 [issue](https://github.com/kata-containers/kata-containers/issues) 页面点击 [New Issue](https://github.com/kata-containers/kata-containers/issues/new/choose) 按钮，就可以看到下面的页面。
 
