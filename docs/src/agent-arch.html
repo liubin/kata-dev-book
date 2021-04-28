@@ -503,6 +503,230 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="agent-&#x4EE3;&#x7801;&#x89E3;&#x6790;">agent &#x4EE3;&#x7801;&#x89E3;&#x6790;</h1>
+<p>agent &#x53EF;&#x4EE5;&#x4F5C;&#x4E3A; guest init &#x8FDB;&#x7A0B;&#x542F;&#x52A8;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x4F7F;&#x7528; systemd &#x7B49;&#x4F5C;&#x4E3A; init &#xFF0C;agent &#x4F5C;&#x4E3A;&#x666E;&#x901A;&#x8FDB;&#x7A0B;&#x542F;&#x52A8;&#x3002;&#x5728;&#x8FD9;&#x7BC7;&#x6587;&#x7684;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x4EE5;&#x5C06; agent &#x4F5C;&#x4E3A;&#x666E;&#x901A;&#x670D;&#x52A1;/&#x8FDB;&#x7A0B;&#x542F;&#x52A8;&#xFF0C;&#x4F7F;&#x7528; systemd &#x4F5C;&#x4E3A; init &#x7CFB;&#x7EDF;&#x4E3A;&#x4F8B;&#x8FDB;&#x884C;&#x8BF4;&#x660E;&#x3002;</p>
+<p>agent &#x9879;&#x76EE;&#x53C8;&#x5206;&#x4E3A;&#x5982;&#x4E0B;&#x51E0;&#x4E2A; crate&#xFF1A;</p>
+<ul>
+<li>agent&#xFF1A;&#x4EE3;&#x7801;&#x4F4D;&#x7F6E; src/agent&#xFF0C;&#x5373; agent &#x4EE3;&#x7801;&#x7684;&#x6839;&#x3002;</li>
+<li>rustjail&#xFF1A; &#x7C7B;&#x4F3C; golang &#x4E2D;&#x7684; libcontainer &#x7684;&#x89D2;&#x8272;&#x3002;&#x4EE3;&#x7801;&#x4F4D;&#x7F6E; src/agent/rustjail</li>
+<li>protocols&#xFF1A;&#x4E3B;&#x8981;&#x5B9A;&#x4E49;&#x4E86; runtim &lt;-&gt; agent &#x4E4B;&#x95F4;&#x7684;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x3002;&#x4EE3;&#x7801;&#x4F4D;&#x7F6E; src/agent/protocols</li>
+<li>oci&#xFF1A;&#x4E3B;&#x8981;&#x662F;&#x5B9A;&#x4E49;&#x4E86; OCI &#x76F8;&#x5173; spec &#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;&#x4EE3;&#x7801;&#x4F4D;&#x7F6E; src/agent/oci</li>
+</ul>
+<h2 id="agent-&#x8FDB;&#x7A0B;">agent &#x8FDB;&#x7A0B;</h2>
+<p>agent &#x7684;&#x542F;&#x52A8;&#x4EE3;&#x7801;&#x89C1; main.rs &#x7684; main &#x51FD;&#x6570;&#x5373;&#x53EF;&#x3002;</p>
+<p>agent &#x7A0B;&#x5E8F;&#x6709;&#x4E24;&#x4E2A;&#x4F5C;&#x7528;&#xFF1A;</p>
+<ul>
+<li>ttrpc&#x670D;&#x52A1;&#xFF1A;&#x4F5C;&#x4E3A; agent &#x670D;&#x52A1;&#xFF0C;&#x901A;&#x8FC7; ttrpc &#x54CD;&#x5E94;&#x6765;&#x81EA; shim &#x8FDB;&#x7A0B;&#x7684;&#x8BF7;&#x6C42;</li>
+<li>&#x542F;&#x52A8;&#x5BB9;&#x5668;&#xFF1A;&#x542F;&#x52A8;&#x5BB9;&#x5668;&#x65F6;&#xFF0C;agent &#x4F1A;&#x901A;&#x8FC7;&#x8FD0;&#x884C; agent &#x4E8C;&#x8FDB;&#x5236;&#x5728;&#x65B0;&#x7684;&#x8FDB;&#x7A0B;&#x4E2D;&#x542F;&#x52A8;&#x5BB9;&#x5668;</li>
+</ul>
+<h3 id="&#x542F;&#x52A8;-ttrpc-&#x670D;&#x52A1;">&#x542F;&#x52A8; ttrpc &#x670D;&#x52A1;</h3>
+<p>main &#x51FD;&#x6570;&#x4F1A;&#x5224;&#x65AD;&#x547D;&#x4EE4;&#x884C;&#x53C2;&#x6570;&#xFF0C;&#x5982;&#x679C;&#x7B2C;&#x4E00;&#x4E2A;&#x53C2;&#x6570;&#x662F; init&#xFF0C;&#x8868;&#x793A;&#x662F;&#x8981;&#x542F;&#x52A8;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x5BB9;&#x5668;&#xFF1B;&#x5426;&#x5219;&#x8868;&#x793A;&#x8981;&#x542F;&#x52A8; ttrpc &#x670D;&#x52A1;&#xFF1A;</p>
+<pre><code class="lang-rust"><span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::result::<span class="hljs-built_in">Result</span>&lt;(), <span class="hljs-built_in">Box</span>&lt;dyn std::error::Error&gt;&gt; {
+    <span class="hljs-keyword">let</span> args: <span class="hljs-built_in">Vec</span>&lt;<span class="hljs-built_in">String</span>&gt; = env::args().collect();
+
+    <span class="hljs-comment">// &#x5982;&#x679C;&#x662F; kata-agent init&#xFF0C;&#x5219;&#x51C6;&#x5907;&#x8FDB;&#x5165;&#x521B;&#x5EFA;&#x5BB9;&#x5668;&#x7684;&#x6B65;&#x9AA4;</span>
+    <span class="hljs-keyword">if</span> args.len() == <span class="hljs-number">2</span> &amp;&amp; args[<span class="hljs-number">1</span>] == <span class="hljs-string">&quot;init&quot;</span> {
+        rustjail::container::init_child();
+        exit(<span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-keyword">let</span> rt = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()?;
+
+    <span class="hljs-comment">// &#x5728; real_main &#x91CC;&#x542F;&#x52A8; ttrpc &#x670D;&#x52A1;&#x3002;</span>
+    rt.block_on(real_main())
+}
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C; &#x542F;&#x52A8; agent &#x670D;&#x52A1;&#x4EE3;&#x7801;&#x5728; <code>real_main</code> &#x51FD;&#x6570;&#x4E2D;&#x3002;</p>
+<p>TODO</p>
+<h3 id="&#x542F;&#x52A8;&#x5BB9;&#x5668;&#x6D41;&#x7A0B;">&#x542F;&#x52A8;&#x5BB9;&#x5668;&#x6D41;&#x7A0B;</h3>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x6765;&#x770B;&#x4E00;&#x4E0B;&#x521B;&#x5EFA;&#x5E76;&#x542F;&#x52A8;&#x4E00;&#x4E2A;&#x5BB9;&#x5668;&#x7684;&#x6D41;&#x7A0B;&#x3002;</p>
+<p>&#x542F;&#x52A8;&#x4E00;&#x4E2A;&#x5BB9;&#x5668;&#x5305;&#x62EC;&#x4E24;&#x4E2A; rpc call&#xFF1A;</p>
+<ul>
+<li>create_container</li>
+<li>start_container</li>
+</ul>
+<p>&#x8FD9;&#x4E24;&#x4E2A; rpc call &#x7684;&#x5165;&#x53E3;&#x90FD;&#x5728; rpc.rs &#x4E2D;&#xFF0C;&#x800C;&#x5B9E;&#x9645;&#x5DE5;&#x4F5C;&#x4EE3;&#x7801;&#xFF0C;&#x90FD;&#x662F;&#x5728; do_create_container &#x548C; do_start_container &#x8FD9;&#x4E24;&#x4E2A;&#x51FD;&#x6570;&#x4E2D;&#x5B9E;&#x73B0;&#x7684;&#x3002;</p>
+<h4 id="createcontainerdocreatecontainer">create_container/do_create_container</h4>
+<p><code>do_create_container</code> &#x4E2D;&#x4E3B;&#x8981;&#x6709;&#x5982;&#x4E0B;&#x64CD;&#x4F5C;&#xFF1A;</p>
+<ul>
+<li>rescan_pci_bus&#xFF1A;&#x67E5;&#x627E;&#x65B0;&#x8BBE;&#x5907;</li>
+<li>add_devices&#xFF1A;&#x66F4;&#x65B0;&#x8BBE;&#x5907;&#x5217;&#x8868;&#xFF0C;&#x8BA9; OCI spec &#x4E2D;&#x7684;&#x914D;&#x7F6E;&#x548C; guest &#x4E2D;&#x7684;&#x8BBE;&#x5907;&#x540C;&#x6B65;</li>
+<li>add_storages&#xFF1A; mount &#x8BBE;&#x5907;/volume</li>
+<li>update_container_namespaces&#xFF1A;&#x66F4;&#x65B0; OCI spec &#x4E2D;&#x7684; namspace</li>
+<li>update_device_cgroup&#xFF1A;&#x66F4;&#x65B0; device cgroup</li>
+<li>append_guest_hooks</li>
+<li>setup_bundle&#xFF1A;&#x521B;&#x5EFA;&#x3001;&#x8BBE;&#x7F6E;&#x5BB9;&#x5668;&#x7684; bundle &#x76EE;&#x5F55;&#xFF0C;&#x521B;&#x5EFA; config.json &#x6587;&#x4EF6;&#x3002;</li>
+</ul>
+<p>&#x5728;&#x4E0A;&#x9762;&#x8FD9;&#x4E9B;&#x51C6;&#x5907;&#x5DE5;&#x4F5C;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#xFF0C;&#x4E0B;&#x9762;&#x7684;&#x4EE3;&#x7801;&#x4F1A;&#x521B;&#x5EFA;&#x5BB9;&#x5668;&#xFF1A;</p>
+<pre><code class="lang-rust">
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> ctr: LinuxContainer =
+    LinuxContainer::new(cid.as_str(), CONTAINER_BASE, opts, &amp;sl!())?;
+
+<span class="hljs-keyword">let</span> p = <span class="hljs-keyword">if</span> oci.process.is_some() {
+    Process::new(
+        &amp;sl!(),
+        &amp;oci.process.as_ref().unwrap(),
+        cid.as_str(),
+        <span class="hljs-literal">true</span>,
+        pipe_size,
+    )?
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(nix::Error::from_errno(nix::errno::Errno::EINVAL)));
+};
+
+ctr.start(p).await?;
+</code></pre>
+<p>&#x4E5F;&#x5373;&#x521B;&#x5EFA;&#x4E00;&#x4E2A; <code>LinuxContainer</code> &#x7C7B;&#x578B;&#x7684;&#x7ED3;&#x6784; <code>ctr</code> &#xFF0C;&#x4E3A; <code>ctr</code> &#x8BBE;&#x7F6E; <code>Process</code> &#x5C5E;&#x6027;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x5BB9;&#x5668;&#x8981;&#x8FD0;&#x884C;&#x7684;&#x8FDB;&#x7A0B;&#xFF0C;&#x7136;&#x540E;&#x8C03;&#x7528; <code>ctr.start(p)</code> &#x6765;&#x201C;&#x542F;&#x52A8;&#x201D;&#x5BB9;&#x5668;&#x3002;&#x8FD9;&#x91CC;&#x867D;&#x7136;&#x4F7F;&#x7528;&#x4E86; <code>start</code> &#x4F5C;&#x4E3A;&#x51FD;&#x6570;&#x540D;&#xFF0C;&#x5B9E;&#x9645;&#x4E0A;&#x5BB9;&#x5668;&#x7684;&#x8FDB;&#x7A0B;&#x8FD8;&#x6CA1;&#x6709;&#x771F;&#x6B63;&#x7684;&#x542F;&#x52A8;&#x3002;&#x5728;&#x4ECB;&#x7ECD;&#x5BB9;&#x5668;&#x771F;&#x6B63;&#x542F;&#x52A8;&#x4EE3;&#x7801;&#x4E4B;&#x524D;&#xFF0C;&#x6211;&#x4EEC;&#x5148;&#x6765;&#x770B;&#x770B; <code>ctr.start(p)</code> &#x65B9;&#x6CD5;&#x90FD;&#x5E72;&#x4E86;&#x4EC0;&#x4E48;&#x3002;</p>
+<h4 id="ctrstartp">ctr.start(p)</h4>
+<p>&#x8FD9;&#x91CC; ctr &#x662F;&#x4E00;&#x4E2A; <code>LinuxContainer</code> &#x7C7B;&#x578B;&#x7684;&#x7ED3;&#x6784;&#x4F53;&#xFF0C;&#x4E5F;&#x662F; Kata agent &#x4E2D;&#x5BB9;&#x5668;&#x7684;&#x5B9E;&#x73B0;&#xFF0C;<code>p</code> &#x4E3A;&#x4E00;&#x4E2A;&#x8FDB;&#x7A0B;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x5BB9;&#x5668;&#x7684;&#x8FDB;&#x7A0B;&#x3002; </p>
+<p>agent &#x521B;&#x5EFA;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x5148;&#x542F;&#x52A8; <code>kata-agent</code> &#x8FDB;&#x7A0B;&#xFF1A;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> exec_path = std::env::current_exe()?;
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> child = std::process::Command::new(exec_path);
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> child = child
+    .arg(<span class="hljs-string">&quot;init&quot;</span>)
+    .stdin(child_stdin)
+    .stdout(child_stdout)
+    .stderr(child_stderr)
+    .env(INIT, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, p.init))
+    .env(NO_PIVOT, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, <span class="hljs-keyword">self</span>.config.no_pivot_root))
+    .env(CRFD_FD, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, crfd))
+    .env(CWFD_FD, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, cwfd))
+    .env(CLOG_FD, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, cfd_log));
+
+<span class="hljs-keyword">if</span> p.init {
+    child = child.env(FIFO_FD, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, fifofd));
+}
+
+child.spawn()?;
+</code></pre>
+<p>&#x8FD9;&#x4E2A;&#x8FDB;&#x7A0B;&#x5C31;&#x662F; Kata agent &#x8FDB;&#x7A0B;&#x672C;&#x8EAB;&#xFF0C;&#x8BBE;&#x7F6E;&#x4E86; <code>init</code> &#x53C2;&#x6570;&#xFF0C;&#x8FD9;&#x6837; agent &#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;&#x4F1A;&#x53BB;&#x521B;&#x5EFA;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x3002;&#x5176;&#x4F59; CRFD_FD/CWFD_FD &#x7528;&#x4E8E;&#x7236;&#xFF08;agent&#xFF09;&#x5B50;&#xFF08;&#x5BB9;&#x5668;&#xFF09;&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x540C;&#x6B65;&#x3002;</p>
+<p>&#x4E0A;&#x9762;&#x4EE3;&#x7801;&#x6709;&#x4E24;&#x70B9;&#x9700;&#x8981;&#x8BF4;&#x660E;&#x4E00;&#x4E0B;&#xFF1A;</p>
+<ul>
+<li><code>p.init</code>&#xFF1A; Process &#x7684; init &#x5C5E;&#x6027;&#xFF0C;&#x5982;&#x679C;&#x662F; true&#xFF0C;&#x8868;&#x793A;&#x542F;&#x52A8;&#x7684;&#x662F;&#x5BB9;&#x5668;&#x7684;&#x8FDB;&#x7A0B;&#xFF0C;&#x5982;&#x679C;&#x662F; false &#x8868;&#x793A;&#x662F; exec RPC &#x542F;&#x52A8;&#x7684;&#x666E;&#x901A;&#x8FDB;&#x7A0B;&#xFF0C;&#x8FD9;&#x4E24;&#x79CD;&#x8FDB;&#x7A0B;&#x5904;&#x7406;&#x6709;&#x533A;&#x522B;&#x3002;</li>
+<li>FIFO_FD &#x662F;&#x5BB9;&#x5668; bundle &#x4E0B;&#x7684;&#x4E00;&#x4E2A;&#x540D;&#x4E3A; <code>exec.fifo</code> &#x7684;&#x6587;&#x4EF6;&#xFF0C;&#x8FD9;&#x4E2A;&#x6587;&#x4EF6;&#x7528;&#x4E8E;&#x63A7;&#x5236;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x7684;&#x542F;&#x52A8;&#x3002;</li>
+</ul>
+<p>&#x8FD9;&#x6837;&#x201C;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x201D;&#x5C31;&#x542F;&#x52A8;&#x4E86;&#xFF0C;&#x4E0B;&#x9762;&#x5C31;&#x662F;&#x83B7;&#x53D6;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x7684; pid&#xFF1A;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> pid_buf = read_async(&amp;<span class="hljs-keyword">mut</span> pipe_r).await?;
+<span class="hljs-keyword">let</span> pid_str = std::str::from_utf8(&amp;pid_buf).context(<span class="hljs-string">&quot;get pid string&quot;</span>)?;
+<span class="hljs-keyword">let</span> pid = <span class="hljs-keyword">match</span> pid_str.parse::&lt;<span class="hljs-keyword">i32</span>&gt;() {
+    <span class="hljs-literal">Ok</span>(i) =&gt; i,
+    <span class="hljs-literal">Err</span>(e) =&gt; {
+    }
+};
+</code></pre>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x8FD9;&#x4E2A; pid &#x4E0D;&#x662F;&#x901A;&#x8FC7;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x76F4;&#x63A5;&#x5F97;&#x5230;&#x7684;&#xFF0C;&#x800C;&#x662F;&#x65E5;&#x901A;&#x8FC7;&#x4ECE; <code>pipe_r</code> &#x8BFB;&#x51FA;&#x6765;&#x7684;&#x3002;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> (prfd, cwfd) = unistd::pipe().context(<span class="hljs-string">&quot;failed to create pipe&quot;</span>)?;
+<span class="hljs-keyword">let</span> (crfd, pwfd) = unistd::pipe().context(<span class="hljs-string">&quot;failed to create pipe&quot;</span>)?;
+
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> pipe_r = PipeStream::from_fd(prfd);
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> pipe_w = PipeStream::from_fd(pwfd);
+</code></pre>
+<p>&#x8FD9;&#x4E2A; <code>pipe_r</code> &#x7684;&#x53E6;&#x4E00;&#x7AEF;&#xFF0C;&#x5C31;&#x662F;&#x4F20;&#x9012;&#x7ED9;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x7684; <code>cwfd</code>&#x3002;&#x5728;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E5F;&#x662F;&#x7ECF;&#x8FC7;&#x4E86;&#x4E00;&#x6B21; fork &#x64CD;&#x4F5C;&#x5728;&#x5B50;&#x8FDB;&#x7A0B;&#x4E2D;&#x8FD0;&#x884C;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x3002;</p>
+<p><code>ctr.start()</code> &#x6700;&#x540E;&#x6267;&#x884C;&#x7684;&#x4E00;&#x4E2A;&#x6BD4;&#x8F83;&#x91CD;&#x8981;&#x7684;&#x51FD;&#x6570;&#x5C31;&#x662F; <code>join_namespaces</code> &#x4E86;&#xFF0C;&#x5728;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x4E2D;&#xFF0C;&#x4F1A;&#x521B;&#x5EFA;&#x3001;&#x542F;&#x52A8;&#x771F;&#x6B63;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x3002;&#x800C;&#x771F;&#x6B63;&#x7684;&#x8FDB;&#x7A0B;&#x7BA1;&#x7406;&#x5DE5;&#x4F5C;&#xFF0C;&#x5219;&#x662F;&#x5728;&#x65B0;&#x542F;&#x52A8;&#x7684;&#x5B50; kata-agent &#x8FDB;&#x7A0B;&#x4E2D;&#x5B9E;&#x73B0;&#x7684;&#x3002;&#x4E5F;&#x5C31;&#x662F;&#x4E0B;&#x9762;&#x8981;&#x4ECB;&#x7ECD;&#x7684; do_init_child &#x51FD;&#x6570;&#x3002;</p>
+<h4 id="doinitchild">do_init_child</h4>
+<p>do_init_child &#x662F; kata-agent &#x8FDB;&#x7A0B;&#x542F;&#x52A8;&#x540E;&#xFF0C;&#x521B;&#x5EFA;&#x771F;&#x6B63;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x7684;&#x5904;&#x7406;&#x51FD;&#x6570;&#x3002;do_init_child &#x548C; kata-agent &#x8FDB;&#x7A0B;&#x901A;&#x8FC7; cwfd/crfd &#x8FD9;&#x5BF9;&#x5206;&#x522B;&#x7528;&#x4E8E;&#x5199;&#x5165;&#x548C;&#x8BFB;&#x53D6;&#x7684; fd &#x6765;&#x901A;&#x4FE1;&#xFF08;&#x540C;&#x6B65;&#xFF09;&#x3002; </p>
+<pre><code class="lang-rust"><span class="hljs-comment">// kata-containers/src/agent/rustjail/src/container.rs</span>
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">do_init_child</span></span>(cwfd: RawFd) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">match</span> fork() {
+        <span class="hljs-literal">Ok</span>(ForkResult::Parent { child, .. }) =&gt; {
+            <span class="hljs-keyword">let</span> _ = write_sync(cwfd, SYNC_DATA, <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}&quot;</span>, pid_t::from(child)).as_str());
+            <span class="hljs-comment">// parent return</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">Ok</span>(());
+        }
+        <span class="hljs-literal">Ok</span>(ForkResult::Child) =&gt; (),
+        <span class="hljs-literal">Err</span>(e) =&gt; {
+        }
+    }
+
+}
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;kata-agent &#x5E26; init &#x53C2;&#x6570;&#x542F;&#x52A8;&#x540E;&#xFF0C;&#x4F1A; fork &#x4E00;&#x6B21;&#xFF0C;&#x521B;&#x5EFA;&#x7684;&#x5B50;&#x8FDB;&#x7A0B;&#x624D;&#x662F;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x771F;&#x6B63;&#x6267;&#x884C;&#x7684;&#x8FDB;&#x7A0B;&#xFF08;&#x5B9E;&#x9645;&#x4E5F;&#x662F;&#x901A;&#x8FC7; <code>execvp</code> &#x542F;&#x52A8;&#x7684;&#xFF09;&#x3002;fork &#x6210;&#x529F;&#x65F6;&#xFF0C;&#x7236;&#x8FDB;&#x7A0B;&#x4F1A;&#x628A;&#x5B50;&#x8FDB;&#x7A0B;&#x7684; pid &#x5199;&#x5230; cwfd &#x4E2D;&#xFF0C;&#x8FD9;&#x6837; kata-agent &#x8FDB;&#x7A0B;&#x5C31;&#x83B7;&#x5F97;&#x4E86;&#x5BB9;&#x5668;&#x7684;&#x771F;&#x5B9E; pid &#x3002;</p>
+<p>&#x4E3B; kata-agent &#x8FDB;&#x7A0B;&#x7684; <code>join_namespaces</code> &#x51FD;&#x6570;&#x548C;&#x65B0;&#x521B;&#x5EFA;&#x7684; kata-agent &#x5B50;&#x8FDB;&#x7A0B;&#x901A;&#x8FC7;&#x6587;&#x4EF6;&#x53E5;&#x67C4;&#x6765;&#x540C;&#x6B65;&#x5BB9;&#x5668;&#x7684;&#x521B;&#x5EFA;&#x8FC7;&#x7A0B;&#xFF0C;&#x6BD4;&#x5982;&#x8BA9;&#x7236;&#x8FDB;&#x7A0B;&#x53D1;&#x9001;&#x5BB9;&#x5668; spec &#x7ED9;&#x5B50;&#x8FDB;&#x7A0B;&#xFF0C;&#x5B50;&#x8FDB;&#x7A0B;&#x901A;&#x77E5;&#x7236;&#x8FDB;&#x7A0B;&#x6267;&#x884C; hook &#x7B49;&#x3002;</p>
+<p><code>do_init_child</code> &#x51FD;&#x6570;&#x6700;&#x540E;&#x90E8;&#x5206;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-rust">
+<span class="hljs-keyword">if</span> init {
+    <span class="hljs-keyword">if</span> init {
+        fifofd = std::env::var(FIFO_FD)?.parse::&lt;<span class="hljs-keyword">i32</span>&gt;().unwrap();
+    }
+
+    ... ...
+
+    <span class="hljs-keyword">let</span> fd = fcntl::open(
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;/proc/self/fd/{}&quot;</span>, fifofd).as_str(),
+        OFlag::O_RDONLY | OFlag::O_CLOEXEC,
+        Mode::from_bits_truncate(<span class="hljs-number">0</span>),
+    )?;
+    unistd::close(fifofd)?;
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> buf: &amp;<span class="hljs-keyword">mut</span> [<span class="hljs-keyword">u8</span>] = &amp;<span class="hljs-keyword">mut</span> [<span class="hljs-number">0</span>];
+    unistd::read(fd, &amp;<span class="hljs-keyword">mut</span> buf)?;
+}
+
+do_exec(&amp;args);
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x770B;&#x5230;&#xFF0C;&#x5982;&#x679C;&#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;&#x5E26;&#x6709; init &#x53C2;&#x6570;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#xFF0C;&#x5219;&#x4F1A;&#x53BB;&#x8BFB;&#x53D6; <code>exec.fifo</code> &#x6587;&#x4EF6;&#x3002;</p>
+<p>&#x8FD9;&#x65F6;&#x5019;&#xFF0C;kata-agent &#x5B50;&#x8FDB;&#x7A0B;&#x4F1A; block &#x4F4F;&#xFF0C;&#x5BB9;&#x5668;&#x8FDB;&#x7A0B;&#x8FD8;&#x6CA1;&#x6709;&#x771F;&#x6B63;&#x542F;&#x52A8;&#x3002;
+&#x76F4;&#x5230;&#x4E0B;&#x4E00;&#x4E2A; rpc start_container &#x8BF7;&#x6C42;&#x8FC7;&#x6765;&#x3002;</p>
+<h4 id="startcontainerdostartcontainer">start_container/do_start_container</h4>
+<p>start_container &#x6700;&#x7EC8;&#x4F1A;&#x6267;&#x884C;&#x5230;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#xFF1A;</p>
+<pre><code class="lang-rust"><span class="hljs-comment">// kata-containers/src/agent/rustjail/src/container.rs</span>
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">exec</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">let</span> fifo = <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{}/{}&quot;</span>, &amp;<span class="hljs-keyword">self</span>.root, EXEC_FIFO_FILENAME);
+    <span class="hljs-keyword">let</span> fd = fcntl::open(fifo.as_str(), OFlag::O_WRONLY, Mode::from_bits_truncate(<span class="hljs-number">0</span>))?;
+    <span class="hljs-keyword">let</span> data: &amp;[<span class="hljs-keyword">u8</span>] = &amp;[<span class="hljs-number">0</span>];
+    unistd::write(fd, &amp;data)?;
+    info!(<span class="hljs-keyword">self</span>.logger, <span class="hljs-string">&quot;container started&quot;</span>);
+    <span class="hljs-keyword">self</span>.init_process_start_time = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+
+    <span class="hljs-keyword">self</span>.status.transition(ContainerState::RUNNING);
+    unistd::close(fd)?;
+
+    <span class="hljs-literal">Ok</span>(())
+}
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;exec &#x51FD;&#x6570;&#x4E0D;&#x590D;&#x6742;&#xFF0C;&#x6838;&#x5FC3;&#x903B;&#x8F91;&#x662F;&#x5F80; <code>exec.fifo</code> &#x6587;&#x4EF6;&#x91CC;&#x5199;&#x4E86;&#x70B9;&#x6570;&#x636E;&#x800C;&#x5DF2;&#x3002;&#x8FD9;&#x65F6;&#xFF0C;&#x6211;&#x4EEC;&#x5728;&#x4E0A;&#x9762;&#x770B;&#x5230;&#x7684; <code>do_init_child</code> &#x51FD;&#x6570;&#x4E2D; block &#x5728;&#x8BFB;&#x53D6; <code>exec.fifo</code> &#x7684;&#x5730;&#x65B9;&#x5C31;&#x4F1A;&#x7EE7;&#x7EED;&#x6267;&#x884C;&#xFF0C;&#x7136;&#x540E;&#x6267;&#x884C;&#x540E;&#x9762;&#x7684; <code>do_exec</code> &#x65B9;&#x6CD5;&#xFF1A;</p>
+<pre><code class="lang-rust">
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">do_exec</span></span>(args: &amp;[<span class="hljs-built_in">String</span>]) -&gt; ! {
+    <span class="hljs-keyword">let</span> path = &amp;args[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">let</span> p = CString::new(path.to_string()).unwrap();
+    <span class="hljs-keyword">let</span> sa: <span class="hljs-built_in">Vec</span>&lt;CString&gt; = args
+        .iter()
+        .map(|s| CString::new(s.to_string()).unwrap_or_default())
+        .collect();
+    <span class="hljs-keyword">let</span> a: <span class="hljs-built_in">Vec</span>&lt;&amp;CStr&gt; = sa.iter().map(|s| s.as_c_str()).collect();
+
+    <span class="hljs-keyword">let</span> _ = unistd::execvp(p.as_c_str(), a.as_slice()).map_err(|e| <span class="hljs-keyword">match</span> e {
+        nix::Error::Sys(errno) =&gt; {
+            std::process::exit(errno <span class="hljs-keyword">as</span> <span class="hljs-keyword">i32</span>);
+        }
+        _ =&gt; std::process::exit(-<span class="hljs-number">2</span>),
+    });
+
+    <span class="hljs-built_in">unreachable!</span>()
+}
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x8FD9;&#x91CC;&#x624D;&#x771F;&#x6B63;&#x901A;&#x8FC7; <code>execvp</code> &#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x542F;&#x52A8;&#x4E86;&#x5BB9;&#x5668;&#x4E2D;&#x6307;&#x5B9A;&#x7684;&#x8FDB;&#x7A0B;&#x3002;</p>
+<h3 id="&#x542F;&#x52A8;&#x5BB9;&#x5668;&#x5C0F;&#x7ED3;">&#x542F;&#x52A8;&#x5BB9;&#x5668;&#x5C0F;&#x7ED3;</h3>
+<p>&#x901A;&#x8FC7;&#x4E0A;&#x9762;&#x7684;&#x5206;&#x6790;&#xFF0C;&#x6211;&#x4EEC;&#x770B;&#x5230;&#x542F;&#x52A8;&#x4E00;&#x4E2A;&#x5BB9;&#x5668;&#x7684;&#x6D41;&#x7A0B;&#x5927;&#x81F4;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#xFF08;&#x8FD9;&#x91CC;&#x5E76;&#x975E;&#x662F;&#x51FD;&#x6570;&#x7684;&#x8C03;&#x7528;&#x5173;&#x7CFB;&#xFF0C;&#x800C;&#x662F;&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;&#xFF09;&#xFF1A;</p>
+<p><img src="images/agent_start_container.png" alt="start a container process"></p>
+<p>&#x603B;&#x7ED3;&#x6765;&#x8BF4;&#x5C31;&#x662F;&#xFF1A;</p>
+<ul>
+<li>create_container<ul>
+<li>kata-agent service &#x8FD0;&#x884C; <code>kata-agent init</code> &#x542F;&#x52A8;&#x5BB9;&#x5668;&#x4E34;&#x65F6;&#x8FDB;&#x7A0B;</li>
+<li>&#x5BB9;&#x5668;&#x4E34;&#x65F6;&#x8FDB;&#x7A0B; fork()&#xFF0C;&#x7236;&#x8FDB;&#x7A0B;&#x9000;&#x51FA;&#xFF0C;&#x5C06;&#x5B50;&#x8FDB;&#x7A0B;&#x7684; pid &#x5199;&#x56DE;&#x7ED9; kata-agent service &#x8FDB;&#x7A0B;</li>
+<li>&#x5BB9;&#x5668;&#x4E34;&#x65F6;&#x8FDB;&#x7A0B;&#x5B50;&#x8FDB;&#x7A0B;&#x51C6;&#x5907;&#x5BB9;&#x5668;&#x8FD0;&#x884C;&#x73AF;&#x5883;&#xFF0C;block &#x5728;&#x8BFB;&#x53D6; <code>exec.fifo</code> &#x4E0A;</li>
+</ul>
+</li>
+<li>start_container<ul>
+<li>kata-agent service &#x5411;&#x5BB9;&#x5668;&#x7684; <code>exec.fifo</code> &#x6587;&#x4EF6;&#x4E2D;&#x5199;&#x5165;&#x6570;&#x636E;</li>
+<li>&#x5BB9;&#x5668;&#x4E34;&#x65F6;&#x8FDB;&#x7A0B;&#x5B50;&#x8FDB;&#x7A0B;&#x7EE7;&#x7EED;&#x6267;&#x884C;&#xFF0C;&#x901A;&#x8FC7; execvp &#x542F;&#x52A8;&#x5BB9;&#x5668;&#x7684;&#x771F;&#x5B9E;&#x8FDB;&#x7A0B;</li>
+</ul>
+</li>
+</ul>
 
                                 
                                 </section>
@@ -546,7 +770,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"agent 代码解析","level":"1.3.4","depth":2,"next":{"title":"参与 Kata Containers 项目","level":"1.4","depth":1,"path":"src/mission-3.md","ref":"src/mission-3.md","articles":[{"title":"Kata Containers 项目管理","level":"1.4.1","depth":2,"path":"src/kata-conduct.md","ref":"src/kata-conduct.md","articles":[]},{"title":"第一个 Kata Containers 的 PR","level":"1.4.2","depth":2,"path":"src/your-first-pr.md","ref":"src/your-first-pr.md","articles":[]}]},"previous":{"title":"runtime 代码解析","level":"1.3.3","depth":2,"path":"src/runtime-arch.md","ref":"src/runtime-arch.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/agent-arch.md","mtime":"2021-04-27T12:33:42.937Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-27T13:21:55.807Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"agent 代码解析","level":"1.3.4","depth":2,"next":{"title":"参与 Kata Containers 项目","level":"1.4","depth":1,"path":"src/mission-3.md","ref":"src/mission-3.md","articles":[{"title":"Kata Containers 项目管理","level":"1.4.1","depth":2,"path":"src/kata-conduct.md","ref":"src/kata-conduct.md","articles":[]},{"title":"第一个 Kata Containers 的 PR","level":"1.4.2","depth":2,"path":"src/your-first-pr.md","ref":"src/your-first-pr.md","articles":[]}]},"previous":{"title":"runtime 代码解析","level":"1.3.3","depth":2,"path":"src/runtime-arch.md","ref":"src/runtime-arch.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/agent-arch.md","mtime":"2021-04-28T07:43:14.911Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-28T07:44:17.620Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
