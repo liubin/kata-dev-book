@@ -12,3 +12,6 @@ deploy:
 	git ci -m "update website"
 	git push
 	git checkout main
+
+pdf:
+	gitbook pdf

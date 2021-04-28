@@ -77,5 +77,10 @@ Install it from Calibre: https://calibre-ebook.com
 $ sudo ln -s /Applications/calibre.app/Contents/MacOS/ebook-convert /usr/local/bin
 ```
 
-成功的话，就会在当前文件夹下生成 `book.pdf`，这也就是电子书的 pdf 格式。
+然后通过 `make` 命令即可生成 pdf 文件：
 
+```
+$ make pdf
+```
+
+成功的话，就会在当前文件夹下生成 `book.pdf`，这也就是电子书的 pdf 格式。
