@@ -280,3 +280,6 @@ fn do_exec(args: &[String]) -> ! {
   - kata-agent service 向容器的 `exec.fifo` 文件中写入数据
   - 容器临时进程子进程继续执行，通过 execvp 启动容器的真实进程
 
+子进程和 kata-agent 之间的数据同步也是理解 agent 代码的关键，两个进程间通过（管道）文件句柄来互相同步，比如让父进程执行hook等操作。下面的图是两者之间主要的同步内容和流程：
+
+![sync data for starting a container process](images/agent-container-sync-data.png)
