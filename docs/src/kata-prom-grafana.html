@@ -503,6 +503,49 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="&#x4F7F;&#x7528;-prometheus--grafana-&#x76D1;&#x63A7;-kata-containers">&#x4F7F;&#x7528; Prometheus + Grafana &#x76D1;&#x63A7; Kata Containers</h1>
+<p>&#x8FD9;&#x7BC7;&#x6587;&#x6863;&#x4E3B;&#x8981;&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x4F7F;&#x7528; Prometheus &#x6765;&#x6536;&#x96C6; Kata Containers &#x7684; metrics&#x3002;</p>
+<h2 id="&#x5B89;&#x88C5;-prometheus-&#x548C;-grafana">&#x5B89;&#x88C5; Prometheus &#x548C; Grafana</h2>
+<h3 id="&#x5B89;&#x88C5;-prometheus">&#x5B89;&#x88C5; Prometheus</h3>
+<pre><code>$ wget https://github.com/prometheus/prometheus/releases/download/v2.26.0/prometheus-2.26.0.linux-amd64.tar.gz
+
+$ tar zxf prometheus-2.26.0.linux-amd64.tar.gz
+</code></pre><p>&#x7F16;&#x8F91; Prometheus &#x914D;&#x7F6E;&#x6587;&#x4EF6;</p>
+<pre><code>$ cd prometheus-2.26.0.linux-amd64/
+$ vi prometheus.yml
+</code></pre><p>&#x5728; <code>scrape_configs</code> &#x90E8;&#x5206;&#x7684;&#x6700;&#x540E;&#xFF0C;&#x52A0;&#x5165;&#x4E0B;&#x9762;&#x7684; <code>target</code>&#xFF1A;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">  - job_name:</span> <span class="hljs-string">&apos;kata&apos;</span>
+<span class="hljs-attr">    static_configs:</span>
+<span class="hljs-attr">    - targets:</span> [<span class="hljs-string">&apos;localhost:8090&apos;</span>]
+</code></pre>
+<p>&#x7136;&#x540E;&#x542F;&#x52A8; Prometheus&#xFF1A;</p>
+<pre><code>$ ./prometheus
+</code></pre><h3 id="&#x5B89;&#x88C5;-grafana">&#x5B89;&#x88C5; Grafana</h3>
+<p>&#x4E0B;&#x8F7D;&#x5E76;&#x5B89;&#x88C5; Grafana&#xFF1A;</p>
+<pre><code>$ wget https://dl.grafana.com/oss/release/grafana-7.5.5.linux-amd64.tar.gz
+$ tar -zxf grafana-7.5.5.linux-amd64.tar.gz
+</code></pre><p>&#x542F;&#x52A8; Grafana &#x670D;&#x52A1;&#xFF1A;</p>
+<pre><code>$ cd grafana-7.5.5/
+$ bin/grafana-server
+</code></pre><p>&#x7136;&#x540E;&#x6253;&#x5F00; Grafana &#x7684;&#x7BA1;&#x7406;&#x754C;&#x9762;&#xFF0C;&#x9ED8;&#x8BA4;&#x7AEF;&#x53E3;&#x4E3A; <code>3000</code>&#xFF0C;&#x6BD4;&#x5982; <code>http://&lt;your_server&gt;:3000</code>&#x3002;&#x4E4B;&#x540E;&#x9700;&#x8981;&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x6E90;&#xFF0C;&#x624D;&#x80FD;&#x5728; Grafana &#x4E2D;&#x663E;&#x793A; Prometheus &#x7684;&#x6570;&#x636E;&#x3002;</p>
+<p>&#x9ED8;&#x8BA4;&#x7684;&#x767B;&#x5F55;&#x7528;&#x6237;&#x540D;&#x548C;&#x5BC6;&#x7801;&#x4E3A; <code>admin</code>/<code>admin</code>&#x3002;</p>
+<p>&#x5728;&#x6DFB;&#x52A0;&#x6570;&#x636E;&#x6E90;&#x9875;&#x9762;&#xFF0C;&#x9009;&#x62E9; Prometheus &#x7C7B;&#x578B;&#xFF0C;&#x7136;&#x540E;&#x5728; HTTP &#x4E2D;&#x7684; URL &#x8F93;&#x5165; <code>http://localhost:9090</code> &#x5373;&#x53EF;&#xFF0C;&#x56E0;&#x4E3A; Prometheus &#x548C; Grafana &#x8FD0;&#x884C;&#x5728;&#x540C;&#x4E00;&#x53F0;&#x673A;&#x5668;&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x91CC;&#x53EF;&#x4EE5;&#x4F7F;&#x7528; <code>localhost</code> &#x4F5C;&#x4E3A;&#x4E3B;&#x673A;&#x540D;&#x3002;&#x5426;&#x5219;&#x7684;&#x8BDD;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x80FD;&#x8054;&#x901A;&#x7684;&#x65B9;&#x5F0F;&#xFF0C;&#x6BD4;&#x5982;&#x76F4;&#x63A5;&#x4F7F;&#x7528;&#x57DF;&#x540D;&#x6216;&#x8005;IP&#x5730;&#x5740;&#x3002;</p>
+<p>&#x70B9;&#x51FB;&#x5E95;&#x4E0B;&#x7684; &quot;Save &amp; Test&quot;&#xFF0C;&#x5982;&#x679C;&#x4E00;&#x5207;&#x6B63;&#x5E38;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x5BFC;&#x5165;&#x4E00;&#x4E2A;&#x793A;&#x4F8B;&#x7684; <a href="https://raw.githubusercontent.com/kata-containers/kata-containers/main/docs/how-to/data/dashboard.json" target="_blank">Dashboard</a> &#x4E86;&#x3002;</p>
+<p>&#x8FD9;&#x4E2A; Dashboard &#x53EF;&#x4EE5;&#x4ECE; Grafana &#x7684;&#x7BA1;&#x7406;&#x754C;&#x9762;&#x5BFC;&#x5165;&#x3002;</p>
+<h2 id="&#x542F;&#x52A8;-kata-monitor">&#x542F;&#x52A8; <code>kata-monitor</code></h2>
+<p><code>kata-monitor</code> &#x8FDB;&#x7A0B;&#x8FD0;&#x884C;&#x5728;&#x5BBF;&#x4E3B;&#x673A;&#x4E0A;&#xFF0C;&#x8D1F;&#x8D23;&#x4ECE;&#x5404; Kata Containers &#x5BB9;&#x5668;/VM&#x4E2D;&#x83B7;&#x53D6; metrics&#xFF0C;&#x5E76;&#x8FD4;&#x56DE;&#x7ED9; Prometheus&#x3002;</p>
+<p>&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B; <code>kata-monitor</code> &#x4E0D;&#x9700;&#x8981;&#x6307;&#x5B9A;&#x53C2;&#x6570;&#xFF0C;&#x5B83;&#x4F1A;&#x76D1;&#x542C;&#x5728;&#x672C;&#x5730;&#x7684; <code>8090</code> &#x7AEF;&#x53E3;&#xFF0C;&#x8FD9;&#x4E5F;&#x662F;&#x5728; Prometheus &#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D; <code>target</code> &#x6307;&#x5B9A;&#x7684;&#x7AEF;&#x53E3;&#x53F7;&#x3002;&#x5982;&#x679C;&#x8981;&#x4FEE;&#x6539;&#x8FD9;&#x4E2A;&#x7AEF;&#x53E3;&#x53F7;&#xFF0C;&#x5219;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x4E24;&#x5904;&#x8981;&#x4FDD;&#x6301;&#x4E00;&#x81F4;&#x3002;</p>
+<p><code>kata-monitor</code> &#x542F;&#x52A8;&#x540E;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x5728; Prometheus targets &#x9875;&#x9762;&#xFF08; <code>http://&lt;your_server&gt;:9090/targets</code> &#xFF09;&#x770B;&#x5230;&#x6211;&#x4EEC;&#x7684; target &#x7684;&#x72B6;&#x6001;&#x4E86;&#xFF08;UP&#x8FD8;&#x662F;DOWN&#xFF09;&#x3002;</p>
+<p>&#x8FD9;&#x65F6;&#x5019;&#x5230; Grafana &#x9875;&#x9762;&#xFF0C;&#x627E;&#x5230;&#x6211;&#x4EEC;&#x521A;&#x624D;&#x5BFC;&#x5165;&#x7684; Dashboard&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x7C7B;&#x4F3C;&#x4E0B;&#x9762;&#x7684;&#x9875;&#x9762;&#x3002;</p>
+<p><img src="images/grafana-dashboard.png" alt=""></p>
+<p>Kata Containers &#x76EE;&#x524D;&#x91C7;&#x96C6;&#x4E86;&#x4E0B;&#x9762;&#x51E0;&#x79CD;&#x7C7B;&#x578B;&#x7684; metrics&#xFF1A;</p>
+<ul>
+<li>Kata agent metrics&#xFF1A;agent &#x8FDB;&#x7A0B;&#x7684; metrics</li>
+<li>Kata guest OS metrics&#xFF1A;VM &#x4E2D;&#x7684; guest metrics</li>
+<li>Hypervisor metrics&#xFF1A;hypervisor &#x8FDB;&#x7A0B;&#x7684; metrics&#xFF08;&#x5982;&#x679C; hypervisor &#x672C;&#x8EAB;&#x63D0;&#x4F9B;&#x4E86; metrics &#x63A5;&#x53E3;&#xFF0C;&#x6BD4;&#x5982; firecracker&#xFF0C;&#x4E5F;&#x4F1A;&#x91C7;&#x96C6;&#x5230; Kata Containers &#x7684; metrics&#xFF09;</li>
+<li>Kata monitor metrics&#xFF1A;kata-monitor &#x8FDB;&#x7A0B;&#x7684; metrics</li>
+<li>Kata containerd shim v2 metrics&#xFF1A;shimv2 &#x8FDB;&#x7A0B;&#x7684; metrics</li>
+</ul>
+<p>&#x5177;&#x4F53;&#x7684; metrics &#x4FE1;&#x606F;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x8003;<a href="https://github.com/kata-containers/kata-containers/blob/main/docs/design/kata-2-0-metrics.md#metrics-list" target="_blank">&#x8FD9;&#x91CC;&#x7684;&#x6587;&#x6863;</a>&#x3002;</p>
 
                                 
                                 </section>
@@ -546,7 +589,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"使用 Prometheus + Grafana 监控 Kata Containers","level":"1.5.7","depth":2,"next":{"title":"使用 Jaeger 输出 Kata Containers 的 Trace","level":"1.5.8","depth":2,"path":"src/kata-trace.md","ref":"src/kata-trace.md","articles":[]},"previous":{"title":"在 K8s 中使用 Kata Containers","level":"1.5.6","depth":2,"path":"src/with-k8s.md","ref":"src/with-k8s.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/kata-prom-grafana.md","mtime":"2021-04-28T07:55:49.584Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-30T08:29:26.773Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"使用 Prometheus + Grafana 监控 Kata Containers","level":"1.5.7","depth":2,"next":{"title":"使用 Jaeger 输出 Kata Containers 的 Trace","level":"1.5.8","depth":2,"path":"src/kata-trace.md","ref":"src/kata-trace.md","articles":[]},"previous":{"title":"在 K8s 中使用 Kata Containers","level":"1.5.6","depth":2,"path":"src/with-k8s.md","ref":"src/with-k8s.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/kata-prom-grafana.md","mtime":"2021-05-06T08:51:25.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-06T08:59:01.039Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
