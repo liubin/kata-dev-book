@@ -25,7 +25,7 @@ Kata Containers 代码托管在 GitHub 上，这是它的主页： https://githu
 |---|---|---|
 |[runtime](https://github.com/kata-containers/runtime)|Golang|runtime/shimv2|
 |[kata-agent](https://github.com/kata-containers/agent)|Golang|运行在 guest 中的 agent，和 runtime 通过 gRPC 协议通信，负责 guest 内容器的管理|
-|[kata-proxy](https://github.com/kata-containers/proxy)|Golang|运行在 guest 中的 agent|
+|[kata-proxy](https://github.com/kata-containers/proxy)|Golang|运行在 host 中的代理，负责路由kata-shim和kata-runtime到kata-agent之间的I/O和信号|
 |[kata-shim](https://github.com/kata-containers/shim)|Golang|运行在 host 中，负责 guest 中进程的 I/O 拷贝和信号处理|
 |[documentation](https://github.com/kata-containers/documentation)|文档|开发、使用文档|
 |[packaging](https://github.com/kata-containers/packaging)|文档、脚本|构建内核、安装包、发布新版本|
