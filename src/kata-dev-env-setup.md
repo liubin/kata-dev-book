@@ -55,8 +55,6 @@ kata-containers/src 下有如下几个项目的代码：
 - agent： agent 代码
 - runtime： runtime（shimv2）代码
 - trace-forwarder：可选，一个用于将 guest 内的 trace 通过 vsock 转发出来的组件。
-- kata-monitor：可选，运行在主机中，运行一些 shimv2 协议之外的管理接口。
-
 
 ### 其他仓库
 
