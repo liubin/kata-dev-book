@@ -180,7 +180,7 @@ l, err = net.FileListener(os.NewFile(3, "socket"))
 
 第一个 shimv2 进程，会将 ttrpc 监听地址写入到标准输出，返回给 containerd 使用。
 
-**Not:** containerd 有一些 task 事件是通过 shimv2 进程调用 containerd 程序来发送给 containerd 的，而不是通过网络连接或者 API ，所以 shimv2 启动选项中有 `publish-binary` 。
+**Note:** containerd 有一些 task 事件是通过 shimv2 进程调用 containerd 程序来发送给 containerd 的，而不是通过网络连接或者 API ，所以 shimv2 启动选项中有 `publish-binary` 。
 
 #### CreateContainer
 
