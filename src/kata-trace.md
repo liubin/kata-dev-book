@@ -41,8 +41,6 @@ jaeger_endpoint="http://x.y.z.a:14268/api/traces"
 
 ```
 [agent.kata]
-enable_debug = true
-
 enable_tracing = true
 trace_mode = "static"
 ```
