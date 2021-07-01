@@ -24,10 +24,51 @@ $ docker run -d --name jaeger \
 
 ### 启用 runtime 的 trace
 
+开启 runtime 侧的 trace ：
+
+```
+[runtime]
+enable_tracing = true
+jaeger_endpoint="http://x.y.z.a:14268/api/traces"
+```
+
+其中 Jaegere collector 地址需要根据实际情况填写。
 
 ### 启用 agent 的 trace
 
-TODO(waitting https://github.com/kata-containers/kata-containers/pull/411).
+
+开启配置：
+
+```
+[agent.kata]
+enable_debug = true
+
+enable_tracing = true
+trace_mode = "static"
+```
+
+现在 `trace_mode` 只支持一种 `static` 模式（ https://github.com/kata-containers/kata-containers/issues/420 ）。
+
+
+#### 启动 trace forwarder
+
+目前 agent 需要依赖 trace forwarder 组件将 trace 转发到 Jaeger，要想输出 agent 的 trace ，需要先启动 trace forwerder 组件。
+
+进入到 `src/trace-forwarder` 文件夹，输入 `make` 命令既可以编译 trace forwarder ，编译后的结果为 `target/debug/kata-trace-forwarder` 。
+
+`kata-trace-forwarder` 有如下几个参数（可通过 `kata-trace-forwarder -h` 获得）：
+
+```
+        --jaeger-host <jaeger-host>    Jaeger host address [default: 127.0.0.1]
+        --jaeger-port <jaeger-port>    Jaeger port number [default: 6831]
+    -l, --log-level <log-level>        specific log level [default: info]  [possible values: trace, debug, info, warn,
+                                       error, critical]
+        --trace-name <trace-name>      Specify name for traces [default: kata-agent]
+        --vsock-cid <vsock-cid>        VSOCK CID number (or "any") [default: any]
+        --vsock-port <vsock-port>      VSOCK port number [default: 10240]
+```
+
+如果 `kata-trace-forwarder` 和 Jaeger 在同一台机器上，则可以不使用任何参数启动 trace forwarder ，否则需要指定 Jaeger 的链接信息。
 
 ### 创建容器
 
