@@ -57,13 +57,13 @@ trace_mode = "static"
 `kata-trace-forwarder` 有如下几个参数（可通过 `kata-trace-forwarder -h` 获得）：
 
 ```
-        --jaeger-host <jaeger-host>    Jaeger host address [default: 127.0.0.1]
-        --jaeger-port <jaeger-port>    Jaeger port number [default: 6831]
-    -l, --log-level <log-level>        specific log level [default: info]  [possible values: trace, debug, info, warn,
-                                       error, critical]
-        --trace-name <trace-name>      Specify name for traces [default: kata-agent]
-        --vsock-cid <vsock-cid>        VSOCK CID number (or "any") [default: any]
-        --vsock-port <vsock-port>      VSOCK port number [default: 10240]
+    --jaeger-host <jaeger-host>    Jaeger host address [default: 127.0.0.1]
+    --jaeger-port <jaeger-port>    Jaeger port number [default: 6831]
+-l, --log-level <log-level>        specific log level [default: info]  [possible values: trace, debug, info, warn,
+                                   error, critical]
+    --trace-name <trace-name>      Specify name for traces [default: kata-agent]
+    --vsock-cid <vsock-cid>        VSOCK CID number (or "any") [default: any]
+    --vsock-port <vsock-port>      VSOCK port number [default: 10240]
 ```
 
 如果 `kata-trace-forwarder` 和 Jaeger 在同一台机器上，则可以不使用任何参数启动 trace forwarder ，否则需要指定 Jaeger 的链接信息。
