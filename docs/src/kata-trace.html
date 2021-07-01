@@ -519,8 +519,31 @@
   jaegertracing/all-in-one:1.22
 </code></pre><h2 id="&#x914D;&#x7F6E;-kata-containers">&#x914D;&#x7F6E; Kata Containers</h2>
 <h3 id="&#x542F;&#x7528;-runtime-&#x7684;-trace">&#x542F;&#x7528; runtime &#x7684; trace</h3>
+<p>&#x5F00;&#x542F; runtime &#x4FA7;&#x7684; trace &#xFF1A;</p>
+<pre><code>[runtime]
+enable_tracing = true
+jaeger_endpoint=&quot;http://x.y.z.a:14268/api/traces&quot;
+</code></pre><p>&#x5176;&#x4E2D; Jaegere collector &#x5730;&#x5740;&#x9700;&#x8981;&#x6839;&#x636E;&#x5B9E;&#x9645;&#x60C5;&#x51B5;&#x586B;&#x5199;&#x3002;</p>
 <h3 id="&#x542F;&#x7528;-agent-&#x7684;-trace">&#x542F;&#x7528; agent &#x7684; trace</h3>
-<p>TODO(waitting <a href="https://github.com/kata-containers/kata-containers/pull/411" target="_blank">https://github.com/kata-containers/kata-containers/pull/411</a>).</p>
+<p>&#x5F00;&#x542F;&#x914D;&#x7F6E;&#xFF1A;</p>
+<pre><code>[agent.kata]
+enable_debug = true
+
+enable_tracing = true
+trace_mode = &quot;static&quot;
+</code></pre><p>&#x73B0;&#x5728; <code>trace_mode</code> &#x53EA;&#x652F;&#x6301;&#x4E00;&#x79CD; <code>static</code> &#x6A21;&#x5F0F;&#xFF08; <a href="https://github.com/kata-containers/kata-containers/issues/420" target="_blank">https://github.com/kata-containers/kata-containers/issues/420</a> &#xFF09;&#x3002;</p>
+<h4 id="&#x542F;&#x52A8;-trace-forwarder">&#x542F;&#x52A8; trace forwarder</h4>
+<p>&#x76EE;&#x524D; agent &#x9700;&#x8981;&#x4F9D;&#x8D56; trace forwarder &#x7EC4;&#x4EF6;&#x5C06; trace &#x8F6C;&#x53D1;&#x5230; Jaeger&#xFF0C;&#x8981;&#x60F3;&#x8F93;&#x51FA; agent &#x7684; trace &#xFF0C;&#x9700;&#x8981;&#x5148;&#x542F;&#x52A8; trace forwerder &#x7EC4;&#x4EF6;&#x3002;</p>
+<p>&#x8FDB;&#x5165;&#x5230; <code>src/trace-forwarder</code> &#x6587;&#x4EF6;&#x5939;&#xFF0C;&#x8F93;&#x5165; <code>make</code> &#x547D;&#x4EE4;&#x65E2;&#x53EF;&#x4EE5;&#x7F16;&#x8BD1; trace forwarder &#xFF0C;&#x7F16;&#x8BD1;&#x540E;&#x7684;&#x7ED3;&#x679C;&#x4E3A; <code>target/debug/kata-trace-forwarder</code> &#x3002;</p>
+<p><code>kata-trace-forwarder</code> &#x6709;&#x5982;&#x4E0B;&#x51E0;&#x4E2A;&#x53C2;&#x6570;&#xFF08;&#x53EF;&#x901A;&#x8FC7; <code>kata-trace-forwarder -h</code> &#x83B7;&#x5F97;&#xFF09;&#xFF1A;</p>
+<pre><code>        --jaeger-host &lt;jaeger-host&gt;    Jaeger host address [default: 127.0.0.1]
+        --jaeger-port &lt;jaeger-port&gt;    Jaeger port number [default: 6831]
+    -l, --log-level &lt;log-level&gt;        specific log level [default: info]  [possible values: trace, debug, info, warn,
+                                       error, critical]
+        --trace-name &lt;trace-name&gt;      Specify name for traces [default: kata-agent]
+        --vsock-cid &lt;vsock-cid&gt;        VSOCK CID number (or &quot;any&quot;) [default: any]
+        --vsock-port &lt;vsock-port&gt;      VSOCK port number [default: 10240]
+</code></pre><p>&#x5982;&#x679C; <code>kata-trace-forwarder</code> &#x548C; Jaeger &#x5728;&#x540C;&#x4E00;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x4E0D;&#x4F7F;&#x7528;&#x4EFB;&#x4F55;&#x53C2;&#x6570;&#x542F;&#x52A8; trace forwarder &#xFF0C;&#x5426;&#x5219;&#x9700;&#x8981;&#x6307;&#x5B9A; Jaeger &#x7684;&#x94FE;&#x63A5;&#x4FE1;&#x606F;&#x3002;</p>
 <h3 id="&#x521B;&#x5EFA;&#x5BB9;&#x5668;">&#x521B;&#x5EFA;&#x5BB9;&#x5668;</h3>
 <p>&#x6309;&#x7167;&#x4E0B;&#x9762;&#x7684;&#x6B65;&#x9AA4;&#x521B;&#x5EFA;&#x5E76;&#x5220;&#x9664; Pod/container&#xFF1A;</p>
 <pre><code>$ p=`crictl runp -runtime kata pod.yaml`
@@ -574,7 +597,7 @@ $ crictl rmp $p
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"使用 Jaeger 输出 Kata Containers 的 Trace","level":"1.5.8","depth":2,"next":{"title":"附录","level":"1.6","depth":1,"path":"src/appendix.md","ref":"src/appendix.md","articles":[{"title":"简易 Rust 入门","level":"1.6.1","depth":2,"path":"src/rust-hello-world.md","ref":"src/rust-hello-world.md","articles":[]},{"title":"bats","level":"1.6.2","depth":2,"path":"src/bats.md","ref":"src/bats.md","articles":[]},{"title":"tests 仓库","level":"1.6.3","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},{"title":"Container Runtime Interface (CRI)","level":"1.6.4","depth":2,"path":"src/cri.md","ref":"src/cri.md","articles":[]}]},"previous":{"title":"使用 Prometheus + Grafana 监控 Kata Containers","level":"1.5.7","depth":2,"path":"src/kata-prom-grafana.md","ref":"src/kata-prom-grafana.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/kata-trace.md","mtime":"2021-05-17T03:13:39.108Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-15T02:24:18.928Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"使用 Jaeger 输出 Kata Containers 的 Trace","level":"1.5.8","depth":2,"next":{"title":"附录","level":"1.6","depth":1,"path":"src/appendix.md","ref":"src/appendix.md","articles":[{"title":"简易 Rust 入门","level":"1.6.1","depth":2,"path":"src/rust-hello-world.md","ref":"src/rust-hello-world.md","articles":[]},{"title":"bats","level":"1.6.2","depth":2,"path":"src/bats.md","ref":"src/bats.md","articles":[]},{"title":"tests 仓库","level":"1.6.3","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},{"title":"Container Runtime Interface (CRI)","level":"1.6.4","depth":2,"path":"src/cri.md","ref":"src/cri.md","articles":[]}]},"previous":{"title":"使用 Prometheus + Grafana 监控 Kata Containers","level":"1.5.7","depth":2,"path":"src/kata-prom-grafana.md","ref":"src/kata-prom-grafana.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/kata-trace.md","mtime":"2021-07-01T02:52:28.733Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-07-01T02:59:05.475Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
