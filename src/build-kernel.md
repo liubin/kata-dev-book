@@ -9,7 +9,7 @@ apt install -y flex bison libelf-dev
 ## build kernel
 
 ```
-$ tools/packaging/kernel
+$ cd tools/packaging/kernel
 $ ./build-kernel.sh setup
 $ ./build-kernel.sh build
 ```
