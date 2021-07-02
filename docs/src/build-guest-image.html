@@ -512,6 +512,43 @@
 <pre><code># cd tools/osbuilder
 # make USE_DOCKER=true image-fedora
 </code></pre><p>&#x521B;&#x5EFA;&#x597D;&#x7684; image &#x6587;&#x4EF6;&#x4E3A; <code>kata-containers-image-fedora.img</code> &#xFF0C;&#x6587;&#x4EF6;&#x540D;&#x4E2D;&#x7684; <code>fedora</code> &#x5373;&#x6240;&#x6307;&#x5B9A;&#x7684;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x7C7B;&#x578B;&#x3002;</p>
+<h2 id="&#x811A;&#x672C;&#x8BF4;&#x660E;">&#x811A;&#x672C;&#x8BF4;&#x660E;</h2>
+<p>&#x8FD9;&#x91CC;&#x4EE5;&#x4F7F;&#x7528;&#x4E86; Docker(<code>USE_DOCKER=true</code>) &#x7684;&#x573A;&#x666F;&#x8FDB;&#x884C;&#x8BF4;&#x660E;&#x3002;</p>
+<h3 id="&#x6784;&#x5EFA;-rootfs">&#x6784;&#x5EFA; rootfs</h3>
+<p>&#x4E3B;&#x8981;&#x6587;&#x4EF6;&#x5728; <code>rootfs.sh</code> &#xFF0C;&#x5165;&#x53E3;&#x51FD;&#x6570;&#x4E3A; <code>main()</code>&#xFF0C;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x4E3B;&#x8981;&#x6709;&#x4E24;&#x4E2A;&#x51FD;&#x6570;&#x7EC4;&#x6210;&#xFF1A;</p>
+<ul>
+<li><code>build_rootfs_distro</code></li>
+<li><code>setup_rootfs</code></li>
+</ul>
+<h4 id="buildrootfsdistro"><code>build_rootfs_distro</code></h4>
+<p>&#x9996;&#x5148;&#x4F1A;&#x521B;&#x5EFA; Dockerfile&#xFF0C;&#x8FD9;&#x4F7F;&#x7528;&#x4E86; scripts/lib.sh &#x4E2D;&#x7684; <code>generate_dockerfile</code> &#x51FD;&#x6570;&#xFF0C;&#x6784;&#x5EFA;&#x547D;&#x4EE4;&#x5982;&#x4E0B;&#xFF08;&#x7701;&#x7565;&#x90E8;&#x5206;&#x53C2;&#x6570;&#xFF09;&#xFF1A;</p>
+<pre><code>docker build -t ubuntu-rootfs-osbuilder ./rootfs-builder/ubuntu
+</code></pre><p>&#x955C;&#x50CF;&#x6784;&#x5EFA;&#x4E4B;&#x540E;&#xFF0C;&#x4F1A;&#x57FA;&#x4E8E;&#x8FD9;&#x4E2A;&#x955C;&#x50CF;&#xFF0C;&#x542F;&#x52A8;&#x4E00;&#x4E2A;&#x5BB9;&#x5668;&#x6765;&#x6784;&#x5EFA; agent &#x548C; rootfs&#x3002;&#x8FD9;&#x65F6;&#x5019;&#x542F;&#x52A8;&#x7684;&#x547D;&#x4EE4;&#x5982;&#x4E0B;&#xFF08;&#x7701;&#x7565;&#x90E8;&#x5206;&#x53C2;&#x6570;&#xFF0C;&#x8282;&#x9009;&#x81EA;&#x793E;&#x533A; CI job &#x65E5;&#x5FD7;&#xFF09;&#xFF1A;</p>
+<pre><code class="lang-bash">docker run --env https_proxy= --env http_proxy= --env AGENT_VERSION= --env ROOTFS_DIR=/rootfs --env AGENT_BIN=kata-agent --env AGENT_INIT=no --env KERNEL_MODULES_DIR= --env EXTRA_PKGS= --env OSBUILDER_VERSION=2.2.0-alpha0-81ae07081da935ab010a9719f38074df8af20c20 --env INSIDE_CONTAINER=1 --env SECCOMP= --env DEBUG=<span class="hljs-literal">true</span> --env HOME=/root -v /tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go/src/github.com/kata-containers/kata-containers/tools/osbuilder/rootfs-builder/../../../:/kata-containers -v /tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go/src/github.com/kata-containers/kata-containers/tools/osbuilder/ubuntu_rootfs:/rootfs -v /tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go/src/github.com/kata-containers/kata-containers/tools/osbuilder/rootfs-builder/../scripts:/scripts -v /tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go/src/github.com/kata-containers/kata-containers/tools/osbuilder/ubuntu_rootfs:/tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go/src/github.com/kata-containers/kata-containers/tools/osbuilder/ubuntu_rootfs --rm --runtime runc -v /tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go:/tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go --env GOPATH=/tmp/jenkins/workspace/kata-containers-2.0-fedora-PR/go --cap-add SYS_ADMIN --cap-add SYS_CHROOT --cap-add MKNOD \
+--env STAGE_PREPARE_ROOTFS=1 \
+ubuntu-rootfs-osbuilder \
+bash /kata-containers/tools/osbuilder/rootfs-builder/rootfs.sh ubuntu
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x5728;&#x5BB9;&#x5668;&#x4E2D;&#x6267;&#x884C;&#x7684;&#x662F; <code>bash /kata-containers/tools/osbuilder/rootfs-builder/rootfs.sh ubuntu</code> &#x547D;&#x4EE4;&#x3002;</p>
+<p>&#x8FD9;&#x76F8;&#x5F53;&#x4E8E;&#x5728;&#x5BB9;&#x5668;&#x91CC;&#x53C8;&#x8FD0;&#x884C;&#x4E86; <code>rootfs.sh</code> &#x4F46;&#x662F;&#x6CA1;&#x6709;&#x4F7F;&#x7528; <code>USE_DOCKER</code> &#x53C2;&#x6570;&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x65F6;&#x5019;&#x4F1A;&#x6267;&#x884C;&#x5230;&#x8FD9;&#x91CC;&#xFF1A;</p>
+<pre><code class="lang-bash"><span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">${USE_DOCKER}</span>&quot;</span> ] &amp;&amp; [ -z <span class="hljs-string">&quot;<span class="hljs-variable">${USE_PODMAN}</span>&quot;</span> ]; <span class="hljs-keyword">then</span>
+    info <span class="hljs-string">&quot;build directly&quot;</span>
+    build_rootfs <span class="hljs-variable">${ROOTFS_DIR}</span>
+<span class="hljs-keyword">else</span>
+    ...
+<span class="hljs-keyword">fi</span>
+</code></pre>
+<p>&#x5373;&#x6267;&#x884C; <code>build_rootfs</code> &#x51FD;&#x6570;&#x3002;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x9ED8;&#x8BA4;&#x5B9E;&#x73B0;&#x5728; <code>scripts/lib.sh</code> &#x4E2D;&#xFF0C;&#x5404;&#x4E2A; distro &#x4E5F;&#x53EF;&#x4EE5;&#x8986;&#x76D6;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x8003; <code>rootfs/</code> &#x4E0B;&#x5404; distro &#x4E0B;&#x9762;&#x4E2D;&#x7684;&#x5185;&#x5BB9;&#x3002;</p>
+<p>&#x9ED8;&#x8BA4;&#x5B9E;&#x73B0;&#x4E2D;&#x53EA;&#x662F;&#x5B89;&#x88C5;&#x4E86;&#x5404;&#x79CD;&#x9700;&#x8981;&#x7684; package&#x3002;</p>
+<h4 id="setuprootfs"><code>setup_rootfs</code></h4>
+<p><code>setup_rootfs</code> &#x4E3B;&#x8981;&#x662F;&#x7F16;&#x8BD1;&#x548C;&#x5B89;&#x88C5; agent&#x3002;</p>
+<p>&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x5728; main &#x4E2D;&#x901A;&#x8FC7;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#x6765;&#x63A7;&#x5236;&#x662F;&#x5426;&#x6267;&#x884C;&#xFF1A;</p>
+<pre><code class="lang-bash"><span class="hljs-keyword">if</span> [ <span class="hljs-string">&quot;<span class="hljs-variable">$STAGE_PREPARE_ROOTFS</span>&quot;</span> == <span class="hljs-string">&quot;&quot;</span> ]; <span class="hljs-keyword">then</span>
+    init=<span class="hljs-string">&quot;<span class="hljs-variable">${ROOTFS_DIR}</span>/sbin/init&quot;</span>
+    setup_rootfs
+<span class="hljs-keyword">fi</span>
+</code></pre>
+<p>&#x4E3B;&#x5165;&#x53E3;&#xFF0C;&#x5373;&#x4ECE; host &#x6267;&#x884C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x8FD9;&#x4E2A;&#x53D8;&#x91CF;&#x662F;&#x7A7A;&#x7684;&#xFF1B;&#x518D;&#x901A;&#x8FC7; docker run &#x542F;&#x52A8;&#x5BB9;&#x5668;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x8BBE;&#x7F6E;&#x4E86; <code>STAGE_PREPARE_ROOTFS=1</code> &#x8FD9;&#x4E2A;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#xFF0C;&#x6240;&#x4EE5;&#x5BB9;&#x5668;&#x4E2D;&#x4E0D;&#x4F1A;&#x6267;&#x884C; <code>setup_rootfs</code> &#x3002;</p>
 
                                 
                                 </section>
@@ -555,7 +592,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"构建 guest image","level":"1.5.3","depth":2,"next":{"title":"构建 kernel","level":"1.5.4","depth":2,"path":"src/build-kernel.md","ref":"src/build-kernel.md","articles":[]},"previous":{"title":"使用 debug console","level":"1.5.2","depth":2,"path":"src/use-debug-console.md","ref":"src/use-debug-console.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/build-guest-image.md","mtime":"2021-07-02T06:14:02.280Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-07-02T06:14:39.803Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"构建 guest image","level":"1.5.3","depth":2,"next":{"title":"构建 kernel","level":"1.5.4","depth":2,"path":"src/build-kernel.md","ref":"src/build-kernel.md","articles":[]},"previous":{"title":"使用 debug console","level":"1.5.2","depth":2,"path":"src/use-debug-console.md","ref":"src/use-debug-console.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/build-guest-image.md","mtime":"2021-07-02T07:57:50.630Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-07-02T14:15:45.433Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
