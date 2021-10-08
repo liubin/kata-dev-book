@@ -21,7 +21,7 @@
 本 repo 有两个分支：
 
 - main：源代码分支，所有 PR 都需要向这个分支合并
-- website：gitbook在线阅读分支，这个分支不能直接修改，必须通过 Makefile 来更新。
+- website：gitbook 在线阅读分支，这个分支不能直接修改，必须通过 Makefile 来更新。
 
 ## 环境设置
 
@@ -45,6 +45,22 @@ $ nvm use v10.24.0
 $ gitbook -V
 CLI version: 2.3.2
 GitBook version: 3.2.3
+```
+
+## 本地 preview
+
+本地修改文档可以使用如下命令验证：
+
+```bash
+$ gitbook serve
+```
+
+默认监听 `4000` 端口，你可以在浏览器中访问 `http://localhost:4000/` 查看修改效果。
+
+如果想修改监听端口，可以使用如下方式：
+
+```bash
+$ gitbook --port 8080 serve
 ```
 
 ## 如何修改本文档
