@@ -2,3 +2,5 @@ docs-new/
 _book
 docs
 book.pdf
+node_modules/
+package-lock.json
