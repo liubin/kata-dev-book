@@ -24,6 +24,7 @@
   * [在 K8s 中使用 Kata Containers](src/with-k8s.md)
   * [使用 Prometheus + Grafana 监控 Kata Containers](src/kata-prom-grafana.md)
   * [使用 Jaeger 输出 Kata Containers 的 Trace](src/kata-trace.md)
+  * [在 Kata Containers 中使用 SPDK](src/kata-spdk.md)
 * [附录](src/appendix.md)
   * [简易 Rust 入门](src/rust-hello-world.md)
   * [bats](src/bats.md)

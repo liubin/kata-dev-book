@@ -35,13 +35,13 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or 
 
 使用 nvm 可以切换 npm 版本。
 
-```
+```bash
 $ nvm use v10.24.0
 ```
 
 本文档开发所用 gitbook 版本：
 
-```
+```bash
 $ gitbook -V
 CLI version: 2.3.2
 GitBook version: 3.2.3
