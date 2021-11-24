@@ -1,3 +1,5 @@
+SHELL:=bash
+
 # build webpages to docs directory and deploy to website branch.
 deploy:
 	git diff --exit-code || (echo - "\n\n\n\nPLEASE COMMIT CHANGES IN MAIN BRANCH FIRST!\n\n\n\n"; exit 1)
@@ -15,3 +17,7 @@ deploy:
 
 pdf:
 	gitbook pdf
+preview:
+	# FIXME nvm not in $PATH
+	@echo "nvm use v10.24.0"
+	@echo "gitbook serve"
