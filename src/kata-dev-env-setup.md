@@ -131,7 +131,6 @@ INFO: yq was not found, installing it
 
 - containerd-shim-kata-v2
 - kata-monitor
-- kata-netmon
 - kata-runtime
 
 我们的大部分开发工作，基本都会围绕着 containerd-shim-kata-v2 进行。
