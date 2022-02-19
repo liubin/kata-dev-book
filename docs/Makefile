@@ -18,6 +18,5 @@ deploy:
 pdf:
 	gitbook pdf
 preview:
-	# FIXME nvm not in $PATH
-	@echo "nvm use v10.24.0"
-	@echo "gitbook serve"
+	$(call nvm,use,v10.24.0)
+	gitbook serve
