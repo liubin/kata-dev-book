@@ -79,7 +79,7 @@ $ gitbook --port 8080 serve
 
 生成 pdf 文件需要 [calibre](https://calibre-ebook.com) 的支持。
 
-在 macOS 下，如果安装了 clibre ，可能还是会出错，类似这样。
+在 macOS 下，如果安装了 calibre ，可能还是会出错，类似这样。
 
 ```
 InstallRequiredError: "ebook-convert" is not installed.
