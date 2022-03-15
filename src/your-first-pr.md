@@ -182,6 +182,12 @@ Signed-off-by: bin <bin@hyper.sh>
 - fix 的 issue 编号。这部分以 `Fixes: ` 开始，后面跟 issue 编号，如果有多个 issue， issue 之间用逗号分隔。
 - Signed-off-by：这部分通过 `commit -s` 自动填写。
 
+另外，Fixes 也可以指定仓库名，使用如下方式：
+
+
+```
+Fixes: github.com/kata-containers/kata-containers#1234
+```
 
 代码提交到本地后，下一步是需要 push 到 GitHub 的自己仓库之下。
 
