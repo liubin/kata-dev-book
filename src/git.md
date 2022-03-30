@@ -17,6 +17,8 @@ $ git push
 
 有时候修改合并到 main 分支后，可能还需要 backport 到 stable 分支，大致过程如下。
 
+**注意**: 这里 `stable-2.4` 只是示例，要根据实情使用相应分支。
+
 ```bash
 $ git fetch upstream
 $ git co stable-2.4
