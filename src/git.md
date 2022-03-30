@@ -13,6 +13,35 @@ $ git push
 
 这样就可以将 upstream 的 main 分支合并到自己的 main 分支。
 
+## 做一次 backport
+
+有时候修改合并到 main 分支后，可能还需要 backport 到 stable 分支，大致过程如下。
+
+```bash
+$ git fetch upstream
+$ git co stable-2.4
+```
+
+如果本地已经有 stable-2.4 分支，需要更新下本地分支。
+
+```bash
+$ git merge upstream/stable-2.4
+```
+
+创建提 PR 用的分支，然后将需要 backport 的提交 cherry-pick 过来。
+
+```bash
+$ git co -b backport-2.4
+$ git cherry-pick fb8be96194c62840e173c26c3fce3e5db9539a8d
+$ git cherry-pick 5e1c30d4846bcc9e2b56fa229ec26d7d75e3ff7b
+```
+
+最后推送到远程，在 GitHub 上就可以使用页面创建 PR 了，注意这时候选择的 base 分支不是 main ，而是一个 stable 分支。
+
+```bash
+$ git push --set-upstream origin backport-2.4
+```
+
 ## 添加别人的分支
 
 有时候可能需要验证别人的分支，这时候可以：
