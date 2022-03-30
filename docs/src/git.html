@@ -586,6 +586,22 @@ $ git merge upstream/main
 $ git push
 </code></pre>
 <p>&#x8FD9;&#x6837;&#x5C31;&#x53EF;&#x4EE5;&#x5C06; upstream &#x7684; main &#x5206;&#x652F;&#x5408;&#x5E76;&#x5230;&#x81EA;&#x5DF1;&#x7684; main &#x5206;&#x652F;&#x3002;</p>
+<h2 id="&#x505A;&#x4E00;&#x6B21;-backport">&#x505A;&#x4E00;&#x6B21; backport</h2>
+<p>&#x6709;&#x65F6;&#x5019;&#x4FEE;&#x6539;&#x5408;&#x5E76;&#x5230; main &#x5206;&#x652F;&#x540E;&#xFF0C;&#x53EF;&#x80FD;&#x8FD8;&#x9700;&#x8981; backport &#x5230; stable &#x5206;&#x652F;&#xFF0C;&#x5927;&#x81F4;&#x8FC7;&#x7A0B;&#x5982;&#x4E0B;&#x3002;</p>
+<pre><code class="lang-bash">$ git fetch upstream
+$ git co stable-2.4
+</code></pre>
+<p>&#x5982;&#x679C;&#x672C;&#x5730;&#x5DF2;&#x7ECF;&#x6709; stable-2.4 &#x5206;&#x652F;&#xFF0C;&#x9700;&#x8981;&#x66F4;&#x65B0;&#x4E0B;&#x672C;&#x5730;&#x5206;&#x652F;&#x3002;</p>
+<pre><code class="lang-bash">$ git merge upstream/stable-2.4
+</code></pre>
+<p>&#x521B;&#x5EFA;&#x63D0; PR &#x7528;&#x7684;&#x5206;&#x652F;&#xFF0C;&#x7136;&#x540E;&#x5C06;&#x9700;&#x8981; backport &#x7684;&#x63D0;&#x4EA4; cherry-pick &#x8FC7;&#x6765;&#x3002;</p>
+<pre><code class="lang-bash">$ git co -b backport-2.4
+$ git cherry-pick fb8be96194c62840e173c26c3fce3e5db9539a8d
+$ git cherry-pick 5e1c30d4846bcc9e2b56fa229ec26d7d75e3ff7b
+</code></pre>
+<p>&#x6700;&#x540E;&#x63A8;&#x9001;&#x5230;&#x8FDC;&#x7A0B;&#xFF0C;&#x5728; GitHub &#x4E0A;&#x5C31;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x9875;&#x9762;&#x521B;&#x5EFA; PR &#x4E86;&#xFF0C;&#x6CE8;&#x610F;&#x8FD9;&#x65F6;&#x5019;&#x9009;&#x62E9;&#x7684; base &#x5206;&#x652F;&#x4E0D;&#x662F; main &#xFF0C;&#x800C;&#x662F;&#x4E00;&#x4E2A; stable &#x5206;&#x652F;&#x3002;</p>
+<pre><code class="lang-bash">$ git push --set-upstream origin backport-2.4
+</code></pre>
 <h2 id="&#x6DFB;&#x52A0;&#x522B;&#x4EBA;&#x7684;&#x5206;&#x652F;">&#x6DFB;&#x52A0;&#x522B;&#x4EBA;&#x7684;&#x5206;&#x652F;</h2>
 <p>&#x6709;&#x65F6;&#x5019;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x9A8C;&#x8BC1;&#x522B;&#x4EBA;&#x7684;&#x5206;&#x652F;&#xFF0C;&#x8FD9;&#x65F6;&#x5019;&#x53EF;&#x4EE5;&#xFF1A;</p>
 <pre><code class="lang-bash">$ git remote add someone https://github.com/someone/kata-containers
@@ -649,7 +665,7 @@ $ git checkout -b some-branch someone/some-branch
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"常用 git 命令","level":"1.7.3","depth":2,"next":{"title":"tests 仓库","level":"1.7.4","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},"previous":{"title":"bats","level":"1.7.2","depth":2,"path":"src/bats.md","ref":"src/bats.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc"],"pluginsConfig":{"page-toc":{"selector":".markdown-section h2, .markdown-section h3, .markdown-section h4","position":"top","showByDefault":true},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/git.md","mtime":"2022-03-11T13:45:00.600Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-15T09:49:58.909Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"常用 git 命令","level":"1.7.3","depth":2,"next":{"title":"tests 仓库","level":"1.7.4","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},"previous":{"title":"bats","level":"1.7.2","depth":2,"path":"src/bats.md","ref":"src/bats.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc"],"pluginsConfig":{"page-toc":{"selector":".markdown-section h2, .markdown-section h3, .markdown-section h4","position":"top","showByDefault":true},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/git.md","mtime":"2022-03-30T09:22:16.614Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-30T09:22:59.766Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
