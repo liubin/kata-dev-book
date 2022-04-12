@@ -29,6 +29,7 @@
 * [附录](src/appendix.md)
   * [简易 Rust 入门](src/rust-hello-world.md)
   * [bats](src/bats.md)
+  * [开发 tips](src/tips.md)
   * [常用 git 命令](src/git.md)
   * [tests 仓库](src/tests-tips.md)
   * [Container Runtime Interface (CRI)](src/cri.md)
