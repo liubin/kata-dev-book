@@ -599,7 +599,20 @@ $ git merge upstream/main
 $ git push
 </code></pre>
 <p>&#x8FD9;&#x6837;&#x5C31;&#x53EF;&#x4EE5;&#x5C06; upstream &#x7684; main &#x5206;&#x652F;&#x5408;&#x5E76;&#x5230;&#x81EA;&#x5DF1;&#x7684; main &#x5206;&#x652F;&#x3002;</p>
-<h2 id="&#x505A;&#x4E00;&#x6B21;-backport">&#x505A;&#x4E00;&#x6B21; backport</h2>
+<h2 id="&#x4FEE;&#x6539;-commit-author">&#x4FEE;&#x6539; commit author</h2>
+<p>Kata Containers &#x7684; CI &#x548C; GitHub actions &#x68C0;&#x67E5;&#x63D0;&#x4EA4;&#x7684;&#x7528;&#x6237;&#x548C; Signed-off-by &#x4E2D;&#x7684;&#x7528;&#x6237;&#x662F;&#x5426;&#x4E00;&#x81F4;&#xFF0C;&#x5305;&#x62EC;&#x7528;&#x6237;&#x540D;&#x548C; email &#x5730;&#x5740;&#x3002;&#x5982;&#x679C;&#x5DF2;&#x7ECF;&#x4F7F;&#x7528;&#x4E86;&#x9519;&#x8BEF;&#x7684; email &#x548C;&#x7528;&#x6237;&#x540D;&#x63D0;&#x4EA4;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x5982;&#x4E0B;&#x7684;&#x547D;&#x4EE4;&#x8FDB;&#x884C;&#x4FEE;&#x6539;&#xFF08;&#x8FD9;&#x91CC;&#x4EE5;&#x4FEE;&#x6539;&#x5F53;&#x524D;&#x63D0;&#x4EA4;&#x4E3A;&#x4F8B;&#xFF09;&#xFF1A;</p>
+<p>&#x4FEE;&#x6539;&#x524D;&#xFF1A;</p>
+<pre><code>commit 8bba165b50b3937a1f66059b740ad2d30713b961 (HEAD -&gt; some/branch)
+Author: bin &lt;bin@hyper.sh&gt;
+Date:   Thu Apr 14 16:18:12 2022 +0800
+</code></pre><p>&#x4FEE;&#x6539; commit message &#x4E2D;&#x7684; author &#x4FE1;&#x606F;&#xFF1A;</p>
+<pre><code class="lang-bash">$ git commit --amend --author=<span class="hljs-string">&quot;Bin Liu &lt;bin@hyper.sh&gt;&quot;</span> --no-edit
+</code></pre>
+<p>&#x4FEE;&#x6539;&#x540E;&#xFF1A;</p>
+<pre><code>commit 4ad9493284e42e0ba47fe42b4de940a4e66b6ed3 (HEAD -&gt; some/branch)
+Author: Bin Liu &lt;bin@hyper.sh&gt;
+Date:   Thu Apr 14 16:18:12 2022 +0800
+</code></pre><h2 id="&#x505A;&#x4E00;&#x6B21;-backport">&#x505A;&#x4E00;&#x6B21; backport</h2>
 <p>&#x6709;&#x65F6;&#x5019;&#x4FEE;&#x6539;&#x5408;&#x5E76;&#x5230; main &#x5206;&#x652F;&#x540E;&#xFF0C;&#x53EF;&#x80FD;&#x8FD8;&#x9700;&#x8981; backport &#x5230; stable &#x5206;&#x652F;&#xFF0C;&#x5927;&#x81F4;&#x8FC7;&#x7A0B;&#x5982;&#x4E0B;&#x3002;</p>
 <p><strong>&#x6CE8;&#x610F;</strong>: &#x8FD9;&#x91CC; <code>stable-2.4</code> &#x53EA;&#x662F;&#x793A;&#x4F8B;&#xFF0C;&#x8981;&#x6839;&#x636E;&#x5B9E;&#x60C5;&#x4F7F;&#x7528;&#x76F8;&#x5E94;&#x5206;&#x652F;&#x3002;</p>
 <pre><code class="lang-bash">$ git fetch upstream
@@ -679,7 +692,7 @@ $ git checkout -b some-branch someone/some-branch
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"常用 git 命令","level":"1.7.4","depth":2,"next":{"title":"tests 仓库","level":"1.7.5","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},"previous":{"title":"开发 tips","level":"1.7.3","depth":2,"path":"src/tips.md","ref":"src/tips.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc"],"pluginsConfig":{"page-toc":{"selector":".markdown-section h2, .markdown-section h3, .markdown-section h4","position":"top","showByDefault":true},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/git.md","mtime":"2022-03-30T09:30:59.318Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-04-12T03:44:51.446Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"常用 git 命令","level":"1.7.4","depth":2,"next":{"title":"tests 仓库","level":"1.7.5","depth":2,"path":"src/tests-tips.md","ref":"src/tests-tips.md","articles":[]},"previous":{"title":"开发 tips","level":"1.7.3","depth":2,"path":"src/tips.md","ref":"src/tips.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc"],"pluginsConfig":{"page-toc":{"selector":".markdown-section h2, .markdown-section h3, .markdown-section h4","position":"top","showByDefault":true},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"src/git.md","mtime":"2022-04-14T09:49:22.014Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-04-14T09:51:07.955Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
