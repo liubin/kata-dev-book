@@ -16,6 +16,7 @@
 * [Kata Containers 实现和设计](src/mission-4.md)
   * [cgroups](src/cgroups.md)
 * [Kata Containers Howto](src/mission-5.md)
+  * [更新镜像内的 agent](src/update-agent.md)
   * [开启 debug log](src/enable-debug-log.md)
   * [使用 debug console](src/use-debug-console.md)
   * [构建 guest image](src/build-guest-image.md)
