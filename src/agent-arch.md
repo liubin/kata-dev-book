@@ -141,7 +141,7 @@ let pid = match pid_str.parse::<i32>() {
 };
 ```
 
-可以看出，这个 pid 不是通过函数调用直接得到的，而是日通过从 `pipe_r` 读出来的。
+可以看出，这个 pid 不是通过函数调用直接得到的，而是通过 `pipe_r` 读出来的。
 
 ```rust
 let (prfd, cwfd) = unistd::pipe().context("failed to create pipe")?;
