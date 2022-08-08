@@ -7,7 +7,7 @@ Runtime 和 agent 之间通过 Protocol buffers 编码的 ttrpc 协议通信， 
 
 ## 安装环境
 
-要编译 Protocol buffers 文件，需要安装 Protocol buffers 需要支持各语言的编译器。对 Golang 来说，需要安装 `protoc` 和 `protoc-gen-gogottrpc`。
+要编译 Protocol buffers 文件，需要安装 Protocol buffers 在各语言中所需的编译器。对 Golang 来说，需要安装 `protoc` 和 `protoc-gen-gogottrpc`。
 
 ### 安装 `protoc`
 
@@ -25,7 +25,7 @@ $ go get github.com/containerd/ttrpc/cmd/protoc-gen-gogottrpc
 
 Runtime 和 agent 都需要这份生成的 stub 文件，agent 采用 Rust 语言编写， Rust 提供了一个 [Build Script](https://doc.rust-lang.org/cargo/reference/build-scripts.html) 机制来在构建的时候自动生成 protocols 文件，因此在修改了上面的 `agent.proto` 文件的时候，agent 不需要再做额外的工作。
 
-而 runtime 使用了 Golang，需要生成的 `*.pb.go` 文件。我了方便开发者，Kata Containers 提拱了一个脚本 `protocols/hack/update-generated-proto.sh` 来更新这个文件：
+而 runtime 使用了 Golang，需要生成的 `*.pb.go` 文件。为了方便开发者，Kata Containers 提拱了一个脚本 `protocols/hack/update-generated-proto.sh` 来更新这个文件：
 
 ```
 $ cd src/agent

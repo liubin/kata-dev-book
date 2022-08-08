@@ -33,13 +33,13 @@ Kata Containers 项目遵循 OpenStack 基金会的 [four opens](https://governa
 
 架构委员会负责架构决策、标准化等整体技术方向，由 5 名委员构成。
 
-当前架构委员会成员（by 2021.5）如下：
+当前架构委员会成员（by 2022.8）如下：
 
 - `Eric Ernst` ([`egernst`](https://github.com/egernst)), [Apple](https://apple.com/).
-- `Samuel Ortiz` ([`sameo`](https://github.com/sameo)), [Intel](https://www.intel.com).
+- `Samuel Ortiz` ([`sameo`](https://github.com/sameo)), [Apple](https://apple.com/).
 - `Archana Shinde` ([`amshinde`](https://github.com/amshinde)), [Intel](https://www.intel.com).
 - `Peng Tao` ([`bergwolf`](https://github.com/bergwolf)), [Ant Financial](https://www.antfin.com/index.htm?locale=en_US).
-- `Fabiano Fidêncio` ([`fidencio`](https://github.com/fidencio)), [Red Hat](http://www.redhat.com).
+- `Fabiano Fidêncio` ([`fidencio`](https://github.com/fidencio)), [Intel](https://www.intel.com).
 
 架构委员会的成员会在每年在 2 月和 9 月进行两次选举，其中在 2 月的选举中会轮换 2 个席位，在 9 月的选举中会轮换 3 个席位，保持总共 5 个席位不变。
 
