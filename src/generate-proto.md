@@ -7,7 +7,7 @@ Runtime 和 agent 之间通过 Protocol buffers 编码的 ttrpc 协议通信， 
 
 ## 安装环境
 
-要编译 Protocol buffers 文件，需要安装 Protocol buffers 需要支持各语言的编译器。对 Golang 来说，需要安装 `protoc` 和 `protoc-gen-gogottrpc`。
+要编译 Protocol buffers 文件，需要安装 Protocol buffers 在各语言中所需的编译器。对 Golang 来说，需要安装 `protoc` 和 `protoc-gen-gogottrpc`。
 
 ### 安装 `protoc`
 

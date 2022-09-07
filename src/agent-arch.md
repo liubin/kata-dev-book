@@ -1,6 +1,6 @@
 # agent 代码解析
 
-agent 可以作为 guest init 进程启动，也可以使用 systemd 等作为 init ，agent 作为普通进程启动。在这篇文的中，我们以将 agent 作为普通服务/进程启动，使用 systemd 作为 init 系统为例进行说明。
+agent 可以作为 guest init 进程启动，也可以使用 systemd 等作为 init ，agent 作为普通进程启动。在这篇文章中，我们将以 agent 作为普通服务/进程启动，使用 systemd 作为 init 系统为例进行说明。
 
 agent 项目又分为如下几个 crate：
 
@@ -63,7 +63,7 @@ TODO
 - rescan_pci_bus：查找新设备
 - add_devices：更新设备列表，让 OCI spec 中的配置和 guest 中的设备同步
 - add_storages： mount 设备/volume
-- update_container_namespaces：更新 OCI spec 中的 namspace
+- update_container_namespaces：更新 OCI spec 中的 namespace
 - update_device_cgroup：更新 device cgroup
 - append_guest_hooks
 - setup_bundle：创建、设置容器的 bundle 目录，创建 config.json 文件。
@@ -91,7 +91,7 @@ ctr.start(p).await?;
 
 ```
 
-也即创建一个 `LinuxContainer` 类型的结构 `ctr` ，为 `ctr` 设置 `Process` 属性，也就是容器要运行的进程，然后调用 `ctr.start(p)` 来“启动”容器。这里虽然使用了 `start` 作为函数名，实际上容器的进程还没有真正的启动。在介绍容器真正启动代码之前，我们先来看看 `ctr.start(p)` 方法都干了什么。
+也即创建一个 `LinuxContainer` 类型的结构 `ctr` ，为 `ctr` 设置 `Process` 属性，也就是容器要运行的进程，然后调用 `ctr.start(p)` 来“启动”容器。这里虽然使用了 `start` 作为函数名，实际上容器的进程还没有真正的启动。在介绍容器真正的启动代码之前，我们先来看看 `ctr.start(p)` 方法都干了什么。
 
 
 #### ctr.start(p)
