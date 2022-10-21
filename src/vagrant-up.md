@@ -47,7 +47,8 @@ $ cd kata-box
 $ cat <<EOF > Vagrantfile
 Vagrant.configure("2") do |config|
   # 磁盘大小，30 GB比较保守
-  config.disksize.size = '30GB'
+  # Note: 这个配置项需要 disksize 这个插件，需要先安装，否则启动会报错。
+  # config.disksize.size = '30GB'
   config.vm.box = "bento/ubuntu-20.04"
   # 主机名，选择自己喜欢的
   config.vm.hostname="kata-box"
@@ -325,10 +326,25 @@ EOF
 
 镜像下载之后就可以创建 Pod 和容器，并启动容器。
 
+
 创建 pod：
 
 ```
 # pod=`crictl runp -r kata sandbox.yaml`
+```
+
+其中 `sandbox.yaml` 文件内容如下：
+
+```yaml
+metadata:
+  attempt: 1
+  name: test-pod
+  namespace: default
+  uid: hdishd83djaidwnduwk28bcsb
+log_directory: /tmp
+linux:
+  namespaces:
+    options: {}
 ```
 
 查看 pod：
@@ -343,6 +359,21 @@ d3e1a1567602e       24 seconds ago      Ready               busybox-sandbox     
 
 ```
 # cnt=`crictl create $pod container.yaml sandbox.yaml`
+```
+
+其中 `container.yaml` 文件内容如下：
+
+```yaml
+metadata:
+  name: stress
+image:
+  image: containerstack/alpine-stress:latest
+command:
+- top
+linux:
+  resources:
+    memory_limit_in_bytes: 524288000
+log_path: stress.0.log
 ```
 
 启动容器：
