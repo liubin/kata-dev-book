@@ -25,7 +25,7 @@ $ vagrant  version
 顺带安装下vagrant的vagrant-disksize插件，否则启动虚拟机会报错。
 
 ```
-$vagrant plugin install vagrant-disksize
+$ vagrant plugin install vagrant-disksize
 Installing the 'vagrant-disksize' plugin. This can take a few minutes...
 Fetching vagrant-disksize-0.1.3.gem
 Installed the plugin 'vagrant-disksize (0.1.3)'!

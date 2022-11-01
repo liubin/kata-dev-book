@@ -4,14 +4,24 @@
 
 确保 remote 中包括 upstream （kata-containers）和 origin （自己用户下）两个。
 
+
 ```bash
+$ git checkout main
 $ git fetch upstream
-$ git co main
 $ git merge upstream/main
 $ git push
 ```
 
 这样就可以将 upstream 的 main 分支合并到自己的 main 分支。
+
+假设你需要更新自己的的开发分支 `dev-1`，还需要做一次 rebase：
+
+```bash
+$ git checkout dev-1
+$ git rebase -i main
+```
+
+如果没有问题，在 rebase 编辑界面，只需要保存即可，如果有冲突需要解决下。如果该开发分支已经 push 到远程，还需要使用 `git push -f` 来通过该分支到远程。
 
 ## 修改 commit author
 
