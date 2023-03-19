@@ -81,7 +81,7 @@ type TaskService interface {
 }
 ```
 
-可以看到 shimv2 接口实际上是没有“容器”类型资源的接口的，只是“Task”类型的资源，所以 ctr 命令也是使用了 `ctr container` 好 `ctr task` 两个子命令来分别处理容器和 task：容器是一组静态资源，只有真正启动（运行）后，才能成为 Task ，也就是进程。
+可以看到 shimv2 接口实际上是没有“容器”类型资源的接口的，只是“Task”类型的资源，所以 ctr 命令也是使用了 `ctr container` 和 `ctr task` 两个子命令来分别处理容器和 task：容器是一组静态资源，只有真正启动（运行）后，才能成为 Task ，也就是进程。
 
 `Cleanup` 会有清理 task（这时候 shimv2 进程可能因为意外退出了，所以不能通过 shimv2 的 ttrpc 链接来执行操作）
 
